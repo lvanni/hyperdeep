@@ -15,7 +15,6 @@ from util import build_dictionnary
 from unsupervised import LookUpTrain, getParams
 from blocks.utils import shared_floatx
 from util import get_input_from_files, add_padding
-from active import Architecture
 
 def saving_data(repo, recorded_data):
 	filename = "sentence_HS_v0_"
@@ -28,7 +27,7 @@ def saving_data(repo, recorded_data):
 
 
 def Adam(cost, params, lr=0.002, b1=0.1, b2=0.001, e=1e-8):
-        decay_factor = 1-e
+	decay_factor = 1-e
 	updates=[]
 	updates_reinit = []
 	grads=T.grad(cost, params)
@@ -36,23 +35,20 @@ def Adam(cost, params, lr=0.002, b1=0.1, b2=0.001, e=1e-8):
 	i_t = i+1
 	updates.append((i,i_t))
 	updates_reinit.append((i, 0*i))
-        lr = (lr *T.sqrt((1. - (1. - b2)**i_t)) /
-                         (1. - (1. - b1)**i_t))
-        b1_t = 1 - (1 - b1) * decay_factor ** (i_t - 1)
-        for p,g in zip(params, grads):
-            m = shared_floatx(p.get_value() * 0.,
-                                                "adam_m_"+p.name)
-            v = shared_floatx(p.get_value() *0.,
-                                                "adam_v_"+p.name)
-
-            m_t = b1_t*g + (1-b1_t)*g
-            v_t = b2*T.sqr(g) + (1-b2)*v
-            g_t = m_t/(T.sqrt(v_t)+e)
-            updates.append((m,m_t)); updates_reinit.append((m, 0*m))
-            updates.append((v,v_t)); updates_reinit.append((v, 0*v))
-            updates.append((p, p-lr*g_t))
-	   
-        return updates, updates_reinit
+	lr = (lr *T.sqrt((1. - (1. - b2)**i_t)) /
+		(1. - (1. - b1)**i_t))
+	b1_t = 1 - (1 - b1) * decay_factor ** (i_t - 1)
+	for p,g in zip(params, grads):
+		m = shared_floatx(p.get_value() * 0., "adam_m_"+p.name)
+		v = shared_floatx(p.get_value() *0., "adam_v_"+p.name)
+		m_t = b1_t*g + (1-b1_t)*g
+		v_t = b2*T.sqr(g) + (1-b2)*v
+		g_t = m_t/(T.sqrt(v_t)+e)
+		updates.append((m,m_t)); updates_reinit.append((m, 0*m))
+		updates.append((v,v_t)); updates_reinit.append((v, 0*v))
+		updates.append((p, p-lr*g_t))
+	
+	return updates, updates_reinit
 
 def RMSProp(cost, params, learning_rate, decay_rate):
 	updates =[]
@@ -211,6 +207,7 @@ def training_committee(committee, learning_rate, decay_rate, train, valid, batch
 		committee_new.append(new_instance)
 	return committee_new
 
+"""
 def training_Hollande(repo, dico_filename, filenames, dwin, learning_rate, decay_rate):
 
 	train, valid, test = build_database(repo, dico_filename, filenames, dwin)
@@ -378,7 +375,7 @@ def training_Hollande(repo, dico_filename, filenames, dwin, learning_rate, decay
 			# update init
 			reinit()
 			
-			
+"""			
 		
 
 
@@ -394,4 +391,4 @@ if __name__=='__main__':
 	output_dico="embedding_dico_H_S_v3"
 	#filenames = ['HollandeDef.cnr', 'GaulleDef.cnr']
 	#output_dico ="embedding_dico_H_G_v0"
-	training_Hollande(repo, output_dico, filenames, dwin, learning_rate, decay_rate)
+	#training_Hollande(repo, output_dico, filenames, dwin, learning_rate, decay_rate)

@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*-coding:Utf-8 -*
+
 # blocks class 
 import logging
 

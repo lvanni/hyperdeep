@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*-coding:Utf-8 -*
 ########################################
 # training with Collobert architecture #
 ########################################
