@@ -3,14 +3,10 @@ Created on 7 juil. 2016
 
 @author: lvanni
 '''
-from numpy import array
 import numpy
 import theano
-from theano.compile import function
-from theano.compile.io import In
 
 import theano.tensor as T
-
 
 def tuto():
     
