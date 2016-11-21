@@ -74,7 +74,7 @@ def tuto():
     print(D[1])
     print("prediction on D:")
     test = rng.randn(1, feats)
-    print(predict(test)) # On test sur les valeurs de depart
+    print(predict(test)) # On jadt_2016 sur les valeurs de depart
 
 if __name__ == '__main__':
     tuto()

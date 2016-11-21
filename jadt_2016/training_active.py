@@ -282,7 +282,7 @@ def training_Hollande(repo, dico_filename, filenames, dwin, learning_rate, decay
 			print 'kikou'
 			increment= increment_init
 			best_valid = valid_score
-			# compute training cost and test
+			# compute training cost and jadt_2016
 			train_cost = []
 			for minibatch_valid in range(n_train_batches):
 				sentence = x_train[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]

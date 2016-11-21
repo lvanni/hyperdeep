@@ -107,7 +107,7 @@ def unsupervised_training(learning_rate, decay_rate, epochs, repo, output_dico, 
 	data = numpy.asarray(data).astype(int)
 	labels = numpy.asarray(data_c).astype(int)
 
-	# test : reduce data
+	# jadt_2016 : reduce data
 	data = data
 	data_c = data_c
 	# reading by minibatch

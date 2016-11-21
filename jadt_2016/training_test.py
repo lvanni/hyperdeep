@@ -47,23 +47,29 @@ def build_lookup(repo, output_dico, filename_load):
 	return lookup
 
 
-def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
+def training(repo, output_dico, learning_rate, decay_rate, filenames):
 	
 	#########
 	# MODEL #
 	#########
-	dwin = 20
+	dwin = 20	# Nb mots dans une fenetre
+	
+	# on charge le dico
 	with closing(open(os.path.join(repo, output_dico), 'rb')) as f:
 		dico = pickle.load(f)
-	n_mot = [len(dico[i]) for i in dico.keys()]
-	vect_size = [100, 10, 5, 5]
-	n_hidden = [100, 50]
+		
+	n_mot = [len(dico[i]) for i in dico.keys()] # Nb mot dans le dico/corpus
+	
+	vect_size = [100, 10, 5, 5] # Nb de feature associées à chaque niveau (forme/code/lemme/???)
+	n_hidden = [100, 50] # 2 couches : 100 neurones + 50 neurones
 
-	t_nlp = LookUpTrain(dwin, n_mot, vect_size, n_hidden, n_out=2)
+	# Natural Langage Processing
+	t_nlp = LookUpTrain(dwin, n_mot, vect_size, n_hidden, n_out=2) # Le model: voir unsupervised.py
 	t_nlp.initialize()
 	#t_nlp.load(repo, filename_load)
 
-	x = T.itensor3('x')
+	# tensor => Matrice de matrices (i pour entier)
+	x = T.itensor3('x') # 3 dimensions : 1) Nombre de phrases en entrée 2) Nombre de mots par phrase 3) Nombre de niveaux => ex Forme/code/lemme/??? := 4 niveaux 
 	y = T.ivector('y')
 
 	cost = T.mean(t_nlp.cost(x, y))
@@ -71,35 +77,27 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 
 
 	params = getParams(t_nlp, x)
-	updates, _ = Adam(cost, params, learning_rate)
-	"""
-	for p, i in zip(params, range(len(params))):
-		p.name+='_'+str(i)
+	updates, _ = Adam(cost, params, learning_rate) # Back Propagation
 
-	#calcul du gradient avec RMSProp
-	updates = []
-	caches = {}
-	grad_params = T.grad(cost, params)
-	for param, grad_param in zip(params, grad_params):
-
-		if not caches.has_key(param.name):
-			caches[param.name] = shared_floatx(param.get_value() * 0.,
-												"cache_"+param.name)
-		# update rule
-		update_cache = decay_rate*caches[param.name]\
-					+ (1 - decay_rate)*grad_param**2
-		update_param = param  - learning_rate*grad_param/T.sqrt(update_cache + 1e-8)
-		updates.append((caches[param.name], update_cache))
-		updates.append((param, update_param))
-	"""
-
+	# Entrainement du modele
 	train_model = theano.function(inputs=[x,y], outputs=cost, updates=updates,
 					allow_input_downcast=True)
 
+	# Validation 
 	valid_model = theano.function(inputs=[x, y], outputs=cost, allow_input_downcast=True)
+	
+	# Test => Nombre d'err du reseau
 	test_model = theano.function(inputs=[x, y], outputs=error, allow_input_downcast=True)
-        predict = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
+	
+	# Fonction de prediction : Pour une phrase donnée, quel est le président
+	predict = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
+	
+	# Qualité de la prédiction
 	predict_confidency = theano.function(inputs=[x], outputs=t_nlp.predict_confidency(x)[0], allow_input_downcast=True)
+	
+	""" 
+	Preprocessing => découpage du texte
+	"""
 	index = 0
 	y_value = []
 	x_value = []
@@ -140,7 +138,7 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 		  [y_value_1[i] for i in neg_permut[neg_percentage+other_neg_percentage:]]
 
 	index_train = np.random.permutation(len(y_train))
-	batch_size = 32
+	batch_size = 32 # 32 phrases à la fois
 	index_valid = np.random.permutation(len(y_valid))
 	index_test = np.random.permutation(len(y_test))
 	x_train_ = [x_train[i].astype(int) for i in index_train]
@@ -150,6 +148,8 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 	y_valid_ = [y_valid[i] for i in index_valid]
 	y_test_ = [y_test[i] for i in index_test]
 
+	# decoupage des phrases en padding
+	# padding => pour combler le manque de mots
 	paddings = [ [], [], [], []]
 	for i in range(dwin/2):
 		for i in xrange(4):
@@ -160,6 +160,7 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 	x_valid_ = [add_padding(elem, paddings) for elem in x_valid_]
 	x_test_ = [add_padding(elem, paddings) for elem in x_test_]
 
+	# decoupage du texte en segment de 20 mots	
 	x_train=[]; x_valid=[]; x_test=[]
 	y_train=[]; y_valid=[]; y_test=[]
 	for elem, label in zip(x_train_, y_train_):
@@ -175,6 +176,7 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 			x_test.append(elem[:,i:i+dwin])
 			y_test.append(label)
 
+	# Melange l'ordre des phrases (pas des mots dans la phrase...)
 	index_train = np.random.permutation(len(y_train))
 	index_valid = np.random.permutation(len(y_valid))
 	index_test = np.random.permutation(len(y_test))
@@ -184,7 +186,13 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 	y_train = [y_train[i] for i in index_train]
 	y_valid = [y_valid[i] for i in index_valid]
 	y_test = [y_test[i] for i in index_test]
+	"""
+	END Preprocessing...
+	"""
 
+	"""
+	Entrainement
+	"""
 	n_train = len(y_train)/batch_size
 	n_valid = len(y_valid)/batch_size
 	n_test = len(y_test)/batch_size
@@ -194,7 +202,7 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 	print "#############################"
 	saving ='JADT_2_Fev_H_G_'
 	index_filename=0
-        epochs = 10 # number of iterations on the corpus
+	epochs = 10 # number of iterations on the corpus
 	for epoch in range(epochs):
 		index_valid = n_train
 		for minibatch_index in range(n_train):
@@ -205,6 +213,7 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 			train_value = train_model(sentence, y_value)
 			#after = valid_model(sentence, y_value)
 			#print before - after
+			
 		if True:
 			train_cost=[]
 			for minibatch_train in range(n_train):
@@ -215,11 +224,11 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 			print "Train : "+str(np.mean(train_cost)*100)
 			valid_cost=[]
 			predictions=[]
-                        for minibatch_valid in range(n_valid):
+			for minibatch_valid in range(n_valid):
 				y_value = y_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
-                                sentence = x_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
+				sentence = x_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
 				valid_value = test_model(sentence, y_value)
-                                valid_cost.append(valid_value)
+				valid_cost.append(valid_value)
 			print "Valid : "+str(np.mean(valid_cost)*100)+" in : "+(saving+str(index_filename))
 			test_cost=[]
 			for minibatch_test in range(n_test):
@@ -230,10 +239,12 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 			print "Test : "+str(np.mean(test_cost)*100)
 			index_filename+=1
 
-	t_nlp.save(repo, saving)
+	t_nlp.save(repo, saving) # Sauvegarde du reseau à chaque iteration
 	return
-	#### parcourir le test : take the 10 most accurate sentence ###
-	#### parcourir le test : take the 10 less accurate sentence ###
+
+	# Analyse pour Damon (=> les mots/pattern qui ont servi à la prediction)
+	#### parcourir le test : takejadt_2016 10 most accurate sentence ###
+	#### parcourir le test : takejadt_2016 10 less accurate sentence ###
 	scores = []
 	for index in range(len(y_test)):
 		x_value=x_test[index:index+1]
@@ -246,20 +257,21 @@ def training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames):
 		pickle.dump([right, false], f, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__=='__main__':
+	
+	# Back prop. parameters
 	learning_rate = 1e-4
 	decay_rate = 0.4
-	dwin=9
+	
+	# data*
 	repo='data/dico'
+	
 	#data = 'discours_SarkozyHollande_labelled'
-	n_out = 20
-	vect_size = 40
-	n_hidden_layer=[100, 100]
 	filenames = ['HollandeDef.cnr', 'Sarkozy-Inter-DEF.cnr']
 	#filenames = ['HollandeDef.cnr', 'Chirac1def.cnr', 'Chirac2Def.cnr']
-	#filename_load = 'params_savings_bis_v4_3'
-	output_dico="embedding_dico_H_S_v3"
-	#filenames = ['HollandeDef.cnr', 'GaulleDef.cnr']
+	
+	output_dico = "embedding_dico_H_S_v3" # Dict. index mot/indice...
 	#output_dico ="embedding_dico_H_G_v0"
 	#output_dico ="embedding_dico_H_C_v0"
-	#repo, output_dico, learning_rate, decay_rate, filenames
-	training_Hollande(repo, output_dico, learning_rate, decay_rate, filenames)
+
+	# start...
+	training(repo, output_dico, learning_rate, decay_rate, filenames)
