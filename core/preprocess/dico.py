@@ -78,9 +78,9 @@ def get_input_from_line(filename):
 	
 	with closing(open(filename, 'rb')) as f:
 		for line in f:
-			if len(line) <= 2:
-				continue
 			sequence = line.split('\t')[2:]
+			if len(sequence) != 4:
+				continue
 			sequence[3] = sequence[3][0] # Remove endline characters
 			# LOWER TEXT
 			# @TODO: TEST WITHOUT LOWER  
