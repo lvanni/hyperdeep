@@ -6,29 +6,18 @@ import logging
 
 import theano
 import theano.tensor as T
-from blocks.bricks import (Initializable, Feedforward, Sequence, Activation,
-                            MLP, Tanh, Rectifier, Softmax, Identity)
+from blocks.bricks import Initializable, Feedforward, MLP, Tanh, Softmax, Identity
 from blocks.initialization import IsotropicGaussian, Constant
 
-import numpy
-from six import add_metaclass
-from theano import tensor
-from theano.sandbox.rng_mrg import MRG_RandomStreams
-from toolz import interleave
-from picklable_itertools.extras import equizip
-
-from blocks.config import config
-from blocks.bricks.base import application, _Brick, Brick, lazy
-from blocks.bricks.wrappers import WithExtraDims
+from blocks.bricks.base import application, lazy
 from blocks.roles import add_role, WEIGHT, BIAS
-from blocks.utils import pack, shared_floatx_nans
+from blocks.utils import shared_floatx_nans
 from blocks.graph import ComputationGraph
 from blocks.filter import VariableFilter
 from blocks.bricks.cost import MisclassificationRate
 
 import pickle
 from contextlib import closing
-import os
 import os.path
 
 logger = logging.getLogger(__name__)

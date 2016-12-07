@@ -1,18 +1,13 @@
 ########################################
 # training with Collobert architecture #
 ########################################
-from supervised import ConvPoolNlp
 import theano.tensor as T
-from blocks.initialization import Constant, IsotropicGaussian
-from blocks.bricks.cost import MisclassificationRate
-from blocks.bricks import Softmax
 import theano
 import os
 from contextlib import closing
 import pickle
 import numpy as np
-from util import build_dictionnary
-from unsupervised import LookUpTrain, getParams
+from unsupervised import getParams
 from blocks.utils import shared_floatx
 from util import get_input_from_files, add_padding
 
