@@ -1,0 +1,1 @@
+THEANO_FLAGS="device=cpu" python train.py

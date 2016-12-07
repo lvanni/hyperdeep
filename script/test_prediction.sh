@@ -1,0 +1,1 @@
+python predict.py data/test/test.txt

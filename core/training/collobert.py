@@ -1,16 +1,21 @@
+#!/usr/bin/python
+# -*-coding:Utf-8 -*
 ########################################
 # training with Collobert architecture #
 ########################################
-import theano.tensor as T
-import theano
-import os
 from contextlib import closing
+import os
 import pickle
-import numpy as np
-from core.training.lookup import getParams
-from blocks.utils import shared_floatx
-from util import get_input_from_files, add_padding
 
+from blocks.utils import shared_floatx
+import theano
+
+from core.preprocess.dico import get_input_from_files, add_padding
+from core.training.lookup import getParams
+import numpy as np
+import theano.tensor as T
+
+"""
 def saving_data(repo, recorded_data):
 	filename = "sentence_HS_v0_"
 	index=0
@@ -19,7 +24,7 @@ def saving_data(repo, recorded_data):
 	filename = filename+str(index)
 	with closing(open(os.path.join(repo, filename), 'wb')) as f:
 		pickle.dump(recorded_data, f, protocol=pickle.HIGHEST_PROTOCOL) 
-
+"""
 
 def Adam(cost, params, lr=0.002, b1=0.1, b2=0.001, e=1e-8):
 	decay_factor = 1-e
@@ -205,10 +210,10 @@ def training_committee(committee, learning_rate, decay_rate, train, valid, batch
 """
 def training_Hollande(repo, dico_filename, filenames, dwin, learning_rate, decay_rate):
 
-	train, valid, core = build_database(repo, dico_filename, filenames, dwin)
+	train, valid, core_tmp = build_database(repo, dico_filename, filenames, dwin)
 	x_train, y_train = train
 	x_valid, y_valid = valid
-	x_test, y_test = core
+	x_test, y_test = core_tmp
 	#########
 	# MODEL #
 	#########
@@ -238,7 +243,7 @@ def training_Hollande(repo, dico_filename, filenames, dwin, learning_rate, decay
 	x_train, y_train = train
 	x_valid, y_valid = valid
 	print sum(y_valid)*1./len(y_valid)
-	x_test, y_test = core
+	x_test, y_test = core_tmp
 	batch_size = 32
 	n_train = len(y_train)/batch_size; n_valid = len(y_valid)/batch_size; n_test = len(y_test)/batch_size
 	n_train_batches = 350

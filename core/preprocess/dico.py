@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*-coding:Utf-8 -*
 # util function : parsing and dictionnary
 # @author melanie ducoffe
 from contextlib import closing
@@ -5,6 +7,7 @@ import copy
 import os
 import pickle
 
+from core.config import OCC_DICO, EMBEDDING_DICO, CORPUS_PATH, DICO_PATH
 import numpy as np
 
 # parse a document using dot
@@ -32,10 +35,10 @@ def sub_line(line, j, dwin):
 def add_padding(line, paddings):
 	return np.concatenate([paddings, line, paddings], axis=1)
 
-def get_input_from_file(repo, filename, dico, padding=[]):
+def get_input_from_file(filename, dico, padding=[]):
 	sentences=[]
 	word_sentences=[]
-	with closing(open(os.path.join(repo, filename), 'rb')) as f:
+	with closing(open(filename, 'rb')) as f:
 		line = []
 		rare = [dico[0]['RARE'], dico[1]['RARE'],
 			dico[2]['RARE'], dico[3]['RARE']]
@@ -60,10 +63,10 @@ def get_input_from_file(repo, filename, dico, padding=[]):
 
 	return sentences, word_sentences
 
-def get_input_from_files(repo, filenames, dico):
+def get_input_from_files(filenames, dico):
 	sentences = []
 	for filename in filenames :
-		sentences += get_input_from_file(repo, filename, dico)
+		sentences += get_input_from_file(filename, dico)
 
 	return sentences
 
@@ -150,7 +153,7 @@ def build_dico_from_occ(occ_dico):
 			
 	return dico
 
-if __name__=="__main__":
+def create_dico():
 	
 	corpus = []
 	for filename in os.listdir(CORPUS_PATH):
@@ -160,7 +163,8 @@ if __name__=="__main__":
 	print "#######################"
 	print "Creation de l'embedding"
 	print "#######################"
-	
+	if not os.path.exists(DICO_PATH):
+		os.makedirs(DICO_PATH)
 	occ_dico = build_dictionnary(corpus)
 	embedding_dico = build_dico_from_occ(occ_dico)
 

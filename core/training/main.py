@@ -9,12 +9,13 @@ import pickle
 
 import theano
 
-import numpy as np
-import theano.tensor as T
+from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, \
+	LEARNING_RATE
+from core.preprocess.dico import get_input_from_files, add_padding
 from core.training.collobert import Adam
 from core.training.lookup import LookUpTrain, getParams
-from util import EMBEDDING_DICO
-from util import get_input_from_files, add_padding
+import numpy as np
+import theano.tensor as T
 
 def build_confusion_matrix(labels, mistakes):
 	# binary output
@@ -172,7 +173,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	error = T.mean(t_nlp.errors(x,y))
 
 	params = getParams(t_nlp, x)
-	updates, _ = Adam(cost, params, learning_rate) # Back Propagation
+	updates, _ = Adam(cost, params, LEARNING_RATE) # Back Propagation
 
 	# Entrainement du modele
 	train_model = theano.function(inputs=[x,y], outputs=cost, updates=updates,

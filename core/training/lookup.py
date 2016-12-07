@@ -15,8 +15,9 @@ from blocks.graph import ComputationGraph
 from blocks.initialization import IsotropicGaussian, Constant
 from blocks.roles import add_role, WEIGHT, BIAS
 from blocks.utils import shared_floatx_nans
-
 import theano
+
+from core.config import NLP_PATH
 import theano.tensor as T
 
 logger = logging.getLogger(__name__)
@@ -241,7 +242,7 @@ class LookUpTrain(Initializable, Feedforward):
 
     def load(self, repo, filename):
         params = getParams(self, T.itensor3())
-        with closing(open(NETWORK_PATH + filename, 'rb')) as f:
+        with closing(open(NLP_PATH + filename, 'rb')) as f:
             params_value = pickle.load(f)
         for p, p_value in zip(params, params_value):
             p.set_value(p_value.get_value())
@@ -252,7 +253,9 @@ class LookUpTrain(Initializable, Feedforward):
     def save(self, repo, filename):
         params = getParams(self, T.itensor3())
         index=0
-        while os.path.isfile(NETWORK_PATH + filename + "_" + str(index)):
+        if not os.path.exists(NLP_PATH):
+            os.makedirs(NLP_PATH)
+        while os.path.isfile(NLP_PATH + filename + "_" + str(index)):
             index+=1
         filename = filename+"_"+str(index)
         with closing(open(os.path.join(repo, filename), 'wb')) as f:
