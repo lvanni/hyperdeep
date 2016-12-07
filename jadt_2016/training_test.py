@@ -224,6 +224,9 @@ def training(repo, output_dico, learning_rate, decay_rate, filenames):
 				train_value = valid_model(sentence, y_value)
 				train_cost.append(train_value)
 			print "Train : "+str(np.mean(train_cost)*100)
+			
+			# Validation => permet de controller la plus value d'un nouvel entrainement
+			# On peut arreter l'entrainement si plus aucune evolution.
 			valid_cost=[]
 			predictions=[]
 			for minibatch_valid in range(n_valid):
@@ -233,6 +236,7 @@ def training(repo, output_dico, learning_rate, decay_rate, filenames):
 				valid_cost.append(valid_value)
 			print "Valid : "+str(np.mean(valid_cost)*100)+" in : "+(saving+str(index_filename))
 			test_cost=[]
+			
 			for minibatch_test in range(n_test):
 				sentence = x_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
 				y_value = y_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
@@ -271,7 +275,8 @@ if __name__=='__main__':
 	filenames = ['HollandeDef.cnr', 'Sarkozy-Inter-DEF.cnr']
 	#filenames = ['HollandeDef.cnr', 'Chirac1def.cnr', 'Chirac2Def.cnr']
 	
-	output_dico = "embedding_dico_H_S_v3" # Dict. index mot/indice...
+	# Dict. index mot/indice...
+	output_dico = "embedding_dico_H_S_v3" 
 	#output_dico ="embedding_dico_H_G_v0"
 	#output_dico ="embedding_dico_H_C_v0"
 
