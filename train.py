@@ -13,6 +13,8 @@ from core.training.main import pre_process, training
 
 if __name__ == '__main__':
     
+    print "Starting process..."
+    
     # creation des dictionnaires (occ et embedding)
     if not os.path.exists(EMBEDDING_DICO):
         create_dico()
