@@ -1,7 +1,7 @@
 #oarsub -p "gpu='YES'" -l /gpunum=1 /home/lvanni/hyperdeep/script/start_training.sh
 
 SCRIPTPATH=`dirname $0`
-cd $SCRIPTPATH/hyperdeep
+cd $SCRIPTPATH/..
 
 source /etc/profile.d/modules.sh
 module load cuda/8.0
