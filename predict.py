@@ -52,21 +52,31 @@ if __name__ == '__main__':
     
     # Preprocessing => découpage du texte
     x_train, x_valid, x_test, y_train, y_valid, y_test = pre_process([text_to_test])
+
+    # concatener des arrays numpy
+    # x_cont = np.concatenate([x_train, x_valid, x_test], axis=0)
     
     # Input features
     x = T.itensor3('x') 
     
     # Fonction de prediction : Pour une phrase donnée, quel est le président
-    predict = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
+    #predict = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
+
+    # probabilites sur un text
+    probabilities = theano.function(inputs=[x], outputs=t_nlp.probabilities_text(x), allow_input_downcast=True)
+    # A TESTER
+    # probabilities(x_cont)
+    # sinon
+    # np.mean([probabilities(x_cont[index*batch_size:(index+1)*batch_size])])
     
     # Qualité de la prédiction
-    predict_confidency = theano.function(inputs=[x], outputs=t_nlp.predict_confidency(x)[0], allow_input_downcast=True)
+    #predict_confidency = theano.function(inputs=[x], outputs=t_nlp.predict_confidency(x)[0], allow_input_downcast=True)
     
     # test predict
-    corpus = []
-    for filename in os.listdir(CORPUS_PATH):
-        if ".txt" in filename:
-            corpus.append(filename)
-    print "predict :", corpus[predict([x_test[0]])].replace(".txt", "")
+    #corpus = []
+    #for filename in os.listdir(CORPUS_PATH):
+    #    if ".txt" in filename:
+    #        corpus.append(filename)
+    #print "predict :", corpus[predict([x_test[0]])].replace(".txt", "")
     
     

@@ -10,7 +10,7 @@ import pickle
 import theano
 
 from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, \
-	LEARNING_RATE
+	LEARNING_RATE, BATCH_SIZE
 from core.preprocess.dico import get_input_from_files, add_padding
 from core.training.collobert import Adam
 from core.training.lookup import LookUpTrain, getParams
@@ -188,7 +188,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	"""
 	Entrainement
 	"""
-	batch_size = 32 # 32 phrases à la fois
+	batch_size = BATCH_SIZE # 32 phrases à la fois
 	n_train = len(y_train)/batch_size
 	n_valid = len(y_valid)/batch_size
 	n_test = len(y_test)/batch_size
@@ -203,7 +203,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	
 	# number of iterations on the corpus
 	epochs = 10 
-	
+
 	for epoch in range(epochs):
 		index_valid = n_train
 		
@@ -213,9 +213,21 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 			y_value = y_train[minibatch_index*batch_size:(minibatch_index+1)*batch_size]
 			#before = valid_model(sentence, y_value)
 			train_value = train_model(sentence, y_value)
-			#after = valid_model(sentence, y_value)
-			#print before - after
+			if minibatch_index %10==0:
+				#after = valid_model(sentence, y_value)
+				#print before - after
+				""" VALIDATION """
+				# Validation => permet de controller la plus value d'un nouvel entrainement
+				# On peut arreter l'entrainement si plus aucune evolution.
+				valid_cost=[]
+				for minibatch_valid in range(n_valid):
+					y_value = y_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
+					sentence = x_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
+					valid_value = test_model(sentence, y_value)
+					valid_cost.append(valid_value)
+				print "Valid : " + str(np.mean(valid_cost)*100) + " in : " + (saving+str(index_filename))
 		
+		"""
 		# TRAINING COST
 		train_cost=[]
 		for minibatch_train in range(n_train):
@@ -224,20 +236,11 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 			train_value = valid_model(sentence, y_value)
 			train_cost.append(train_value)
 		print "Train : " + str(np.mean(train_cost)*100)
-		
-		""" VALIDATION """
-		# Validation => permet de controller la plus value d'un nouvel entrainement
-		# On peut arreter l'entrainement si plus aucune evolution.
-		valid_cost=[]
-		for minibatch_valid in range(n_valid):
-			y_value = y_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
-			sentence = x_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
-			valid_value = test_model(sentence, y_value)
-			valid_cost.append(valid_value)
-		print "Valid : " + str(np.mean(valid_cost)*100) + " in : " + (saving+str(index_filename))
+		"""
+		"""
 		test_cost=[]
 		
-		""" TEST """
+
 		for minibatch_test in range(n_test):
 			sentence = x_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
 			y_value = y_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
@@ -246,6 +249,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 			#print "predict :", predict([sentence[0]])
 			#print "predict_confidency :", predict_confidency([sentence[0]])
 		print "Test : " + str(np.mean(test_cost)*100)
+		"""
 		index_filename += 1
 
 	t_nlp.save(NLP_PATH, saving) # Sauvegarde du reseau à chaque iteration

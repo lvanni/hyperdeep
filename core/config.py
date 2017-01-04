@@ -7,8 +7,9 @@ Created on 7 déc. 2016
 '''
 
 # Back prop
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-2
 DECACY_RATE   = 0.4
+BATCH_SIZE    = 32
 
 DWIN = 20                     # Nb de mots dans une phrase
 VECT_SIZE  = [100, 10, 5, 5]  # Nb de feature associées à chaque niveau (forme/lemme/code/fonction)
