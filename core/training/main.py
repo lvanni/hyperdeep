@@ -9,13 +9,14 @@ import pickle
 
 import theano
 
-from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, \
-	LEARNING_RATE, BATCH_SIZE
+from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, LEARNING_RATE, \
+	BATCH_SIZE
 from core.preprocess.dico import get_input_from_files, add_padding
 from core.training.collobert import Adam
 from core.training.lookup import LookUpTrain, getParams
 import numpy as np
 import theano.tensor as T
+
 
 def build_confusion_matrix(labels, mistakes):
 	# binary output

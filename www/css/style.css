@@ -1,0 +1,79 @@
+body {
+	font-family: "Gentium Basic", "Arial Unicode MS", "HelveticaNeue-Light", "Helvetica Neue Light",
+		"Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-size: 10pt;
+}
+
+.top-bar, .top-bar ul, .top-bar > ul {
+	background-color: #333333;
+}
+
+li > a {
+	color: white;
+}
+
+#logo, #banner {
+	height: 180px;
+	padding: 2em;
+	color: lightgrey;
+}
+
+#logo {
+}
+
+#banner {
+	background-color: darkgrey;
+	background-image: url("../img/banner.png");
+	background-size: 100% 200px;
+}
+
+.texte {
+	font-size: 10pt;
+	font-style: italic;
+	text-align: justify;
+}
+
+.selected-menu {
+	color: white !important;
+	padding-bottom: 0.9em;
+	border-bottom: 0.4em #1097eb solid;
+}
+.selected-item {
+	color: grey;	
+}
+
+
+.profil-selected {
+	opacity: 1 !important;
+}
+
+.profil-candidat, .profil-selected {
+	height: 50px;
+}
+
+.profil-candidat {
+	opacity: 0.3;
+}
+
+.orbit-previous, orbit-next {
+	z-index: 99;
+}
+
+.thumb {
+	text-align: center;	
+}
+
+#footer1, #footer2 {
+	width:100%;
+	text-align: center;
+}
+
+#footer1 {
+	background-color: #333333;
+	height: 200px;
+}
+
+#footer2 {
+	background-color: lightgrey;
+	height: 50px; 
+}
