@@ -1,61 +1,7 @@
-<div class="top-bar">
-  <div class="top-bar-left">
-    <ul class="dropdown menu" data-dropdown-menu>
-      <li><a href="#"><span class="selected-menu">Campagne 2017</span></a></li>
-      <li><a href="#"><span class="selected-item">5ème république</span></a></li>
-      <li><a href="#"><span class="selected-item">Révolution</span></a></li>
-    </ul>
-  </div>
-  <div class="top-bar-right">
-    <ul class="menu">
-    	<li><a href="#" target="blank"><i class="fi-social-facebook"></i></a></li>
-    	<li><a href="#" target="blank"><i class="fi-social-twitter"></i></a></li>
-    	<li><a href="#" target="blank"><i class="fi-social-500px"></i></a></li>
-    	<!-- 
-      <li><a href="http://bcl.cnrs.fr" target="blank"><i class="fi-flag"></i><strong>UMR 7320 : Bases, Corpus, Language</strong></a></li>
-       -->
-    </ul>
-  </div>
-</div>
-
-<div class="expanded row">
-  	<div class="small-12 large-3 columns">
-  		<div id="logo">
-			<img alt="UCA" src="www/img/uca-logo.png" /><br /><br />
-			<div style="width: 100%; text-align: center;">
-				<img alt="UCA" src="www/img/logo_cnrs.gif" />&nbsp;&nbsp;
-				<img alt="UCA" src="www/img/logo_BCL.png" />&nbsp;&nbsp;
-				<img alt="UCA" src="www/img/logo_unice.png" />
-			</div>
-		</div>
-	</div>
-	<div class="small-12 large-9 columns" style="padding-right: 0px;">
-		<div id="banner">
-			<h2 style="color: white;">Mesure du discours</h2>
-			<h4>Observatoire de la campagne présidentielle 2017</h4>
-			<p><a>Logométrie</a> & <a>Deep-learning</a> sur discours politique</p>
-		</div>
-	</div>
-</div>
-
-<div class="top-bar">
-    <ul class="dropdown menu expanded medium-text-center" >
-      <li><a href="#"><img class="profil-selected" alt="valls" src="www/img/melenchon.png" /></a></li>
-      <li><a href="#"><img class="profil-candidat" alt="valls" src="www/img/jadot.png" /></a></li>
-      <li><a href="#"><img class="profil-candidat" alt="valls" src="www/img/macron.png" /></a></li>
-      <li><a href="#"><img class="profil-candidat" alt="valls" src="www/img/valls.png" /></a></li>
-      <li><a href="#"><img class="profil-candidat" alt="valls" src="www/img/fillon.png" /></a></li>
-      <li><a href="#"><img class="profil-candidat" alt="valls" src="www/img/lepen.png" /></a></li>
-    </ul>
-
-</div>
-
-<br />
-<div class="row">
-  <div class="texte small-12 large-7 columns" style="padding-right: 4em;">
-  		<h4>Dernier discours :</h4>
-  		<h5>J.-L. Melenchon, le 07 décembre 2016 (Blog)</h5>
-  		<p>
+<!-- 
+<h4>Dernier discours :</h4>
+<h5>J.-L. Melenchon, le 07 décembre 2016 (Blog)</h5>
+<p>
 Tomber malade : un nouveau luxe
 </p><p>
 Non, ce n’est pas un procès d’intention. François Fillon est le candidat des assureurs contre la Sécurité sociale. C’est ce qui ressort de la lecture de son programme.  Tout le monde pourra aller vérifier ce que je vais relever. Le système Fillon repose sur le recul des remboursements par la Sécurité sociale et l’encouragement aux assureurs privés. Un autre indice nous a été donné la presse. France Inter affirme ainsi que François Fillon aurait déjà choisi son futur ministre de l’Économie et des Finances en cas de victoire à la présidentielle. Il nommerait à Bercy Henri de Castries, l’ancien PDG de l’assureur privé Axa pendant 16 ans ! Ce ne peut être un hasard. Henri de Castries n’a quitté la présidence de ce groupe qu’il y a quelques mois, pour devenir administrateur de la banque HSBC. Précisons, pour situer les perceptions de la vie que peut avoir le personnage : lors de sa dernière année chez Axa, en 2015, il gagnait 5,4 millions d’euros de salaire ! Que peut-il comprendre aux raisons des 30 % de gens qui n’osent plus se soigner parce qu’une ordonnance, ça coûte trop cher… Le conflit d’intérêt serait immense si ce personnage devenait demain ministre des Finances chargé de faire voter le budget de la Sécurité sociale et la fiscalité des clients des assurances privées.
@@ -73,121 +19,14 @@ Ce programme a un but. Transférer au privé les milliards d’euros de cotisati
 Nous défendons un tout autre modèle : la sécurité sociale. Le programme l’Avenir en commun prévoit tout le contraire de M. Fillon. Nous proposons d’améliorer la prise en charge des soins par la Sécurité sociale jusqu’à leur remboursement à 100%. Nous voulons rétablir la retraite à 60 ans, réduire la durée de cotisation exigée pour avoir une retraite complète et renforcer le régime de retraite solidaire par répartition. Et face à la dépendance, nous défendons notamment la construction de 50 000 places en établissements pour prendre en charge les personnes dans le besoin dans un réseau public et abordable, et la baisse de ce qui reste à la charge des familles pour les personnes qui continuent de vivre chez elle.
 </p><p>
 Ce modèle est plus juste et moins coûteux. Plus juste car dans le système de la sécurité sociale, le montant des cotisations ne dépend pas de l’âge ni de l’état de santé et que la protection dont on bénéficie ne dépend pas de ses moyens financiers mais de ses besoins : chacun est remboursé de la même façon par exemple. Chacun a un aperçu de ce qu’est un système d’assurance privée individuelle, à travers sa complémentaire santé s’il a les moyens de s’en payer une. Surtout, la Sécu c’est moins cher ! Il suffit de comparer les dépenses de santé entre la France et les États-Unis. En France, ces dépenses de santé représentent 11% de la richesse annuelle du pays. Elles sont essentiellement supportées par l’assurance maladie. Aux États-Unis, les dépenses de santé sont essentiellement privées. Et elles coûtent plus cher puisqu’elles atteignent 16,5% de la richesse du pays. Tout cela pour des résultats sanitaires mauvais là où la France reste une référence malgré les mauvais coups portés à notre système solidaire et à l’hôpital public.
-  </div>
-  
-  <div class="small-12 large-5 columns">
-   <div style="text-align: center;">
-  	<h4>Analyse du discours via <a href="#"><i>Deep learning</i><a></a></h4>
-  	<br />
-  	<img alt="" src="www/img/result1.png">
-  </div>
-  <a class="twitter-timeline" href="https://twitter.com/jadt2016">Tweets by jadt2016</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-  </div>
-</div>  
+ -->
+ 
+ 
+<?php 
+echo "<h4>Dernier discours enregistré :</h4>";
+echo "<h5>" . $candidat . ", le " . $pretty_print_date ." - " .  $type. " - " . $source . "</h5>"; 
+foreach ($text as $line) {
+	echo $line;
+} 
 
-<hr />
-  	<h4 style="margin: 0;" class="text-center">Précedents discours</h4>
-<hr />
-
-<div class="row">
-	<div class="small-2 columns thumb">
-		<img alt="" src="www/img/default.png" /><br /><br />
-		J.-L. Mélenchon
-		<br />
-		25-11-2016
-	</div>
-	<div class="small-2 columns thumb">
-		<img alt="" src="www/img/default.png" /><br /><br />
-		J.-L. Mélenchon
-		<br />
-		25-12-2016
-	</div>
-	<div class="small-2 columns thumb">
-		<img alt="" src="www/img/default.png" /><br /><br />
-		F. Fillon
-		<br />
-		20-11-2016
-	</div>
-	<div class="small-2 columns thumb">
-		<img alt="" src="www/img/default.png" /><br /><br />
-		E. Valls
-		<br />
-		12-11-2016
-	</div>
-	<div class="small-2 columns thumb">
-		<img alt="" src="www/img/default.png" /><br /><br />
-		E. Macron
-		<br />
-		14-11-2016
-	</div>
-	<div class="small-2 columns thumb">
-		<img alt="" src="www/img/default.png" /><br /><br />
-		E. Macron
-		<br />
-		15-11-2016
-	</div>
-</div>
-
-<hr />
-  	<h4 style="margin: 0;" class="text-center">L'analyse de l'expert</h4>
-<hr />
-
-<div class="row">
-	<div class="small-2 columns">
-		<img alt="" src="www/img/default.png" />
-	</div>
-	<div class="small-10 columns">
-		<p>
-		Curabitur lacinia augue eu pellentesque bibendum. Etiam condimentum orci quis tristique suscipit. Vestibulum sed mauris elit. Ut venenatis aliquam nisl vitae cursus. Vivamus vulputate est quis purus vehicula condimentum. Pellentesque et volutpat nibh, et tincidunt justo. Donec non ligula vel ligula luctus finibus nec a sem. Cras vitae libero ultrices, cursus purus id, feugiat ligula. Curabitur auctor eget nisi eget auctor.
-  		</p>
-	</div>
-</div>
-<br />
-<div class="row">
-	<div class="small-2 columns">
-		<img alt="" src="www/img/default.png" />
-	</div>
-	<div class="small-10 columns">
-		<p>
-		Curabitur lacinia augue eu pellentesque bibendum. Etiam condimentum orci quis tristique suscipit. Vestibulum sed mauris elit. Ut venenatis aliquam nisl vitae cursus. Vivamus vulputate est quis purus vehicula condimentum. Pellentesque et volutpat nibh, et tincidunt justo. Donec non ligula vel ligula luctus finibus nec a sem. Cras vitae libero ultrices, cursus purus id, feugiat ligula. Curabitur auctor eget nisi eget auctor.
-  		</p>
-	</div>
-</div>
-
-<br />
-
-<div class="row">
-	<div class="small-2 columns">
-		<img alt="" src="www/img/default.png" />
-	</div>
-	<div class="small-10 columns">
-		<p>
-		Curabitur lacinia augue eu pellentesque bibendum. Etiam condimentum orci quis tristique suscipit. Vestibulum sed mauris elit. Ut venenatis aliquam nisl vitae cursus. Vivamus vulputate est quis purus vehicula condimentum. Pellentesque et volutpat nibh, et tincidunt justo. Donec non ligula vel ligula luctus finibus nec a sem. Cras vitae libero ultrices, cursus purus id, feugiat ligula. Curabitur auctor eget nisi eget auctor.
-  		</p>
-	</div>
-</div>
-<br />
-<div class="row">
-	<div class="small-2 columns">
-		<img alt="" src="www/img/default.png" />
-	</div>
-	<div class="small-10 columns">
-		<p>
-		Curabitur lacinia augue eu pellentesque bibendum. Etiam condimentum orci quis tristique suscipit. Vestibulum sed mauris elit. Ut venenatis aliquam nisl vitae cursus. Vivamus vulputate est quis purus vehicula condimentum. Pellentesque et volutpat nibh, et tincidunt justo. Donec non ligula vel ligula luctus finibus nec a sem. Cras vitae libero ultrices, cursus purus id, feugiat ligula. Curabitur auctor eget nisi eget auctor.
-  		</p>
-	</div>
-</div>
-<br /><br />
-
-<div id="footer1">
-		
-	blabalbal
-</div>
-<div id="footer2">
-		<br />
-		<a href="#">Hyperbase Web Edition</a> - 
-		<a href="http://logometrie.unice.fr/" target="blank">Logométrie</a> - 
-		<a href="<?php echo HTML_ROOT_PATH ?>ui/common/mentions_legales.html" target="blank">Mentions Légales</a> - 
-		<a href="http://www.unice.fr/bcl/" target="blank">UMR 7320 : Bases, Corpus, Langage</a> - 
-		<a href="mailto:laurent.vanni@unice.fr">Contact</a>
-</div>
+?>
