@@ -23,10 +23,18 @@ Ce modèle est plus juste et moins coûteux. Plus juste car dans le système de 
  
  
 <?php 
-echo "<h4>Dernier discours enregistré :</h4>";
-echo "<h5>" . $candidat . ", le " . $pretty_print_date ." - " .  $type. " - " . $source . "</h5>"; 
+echo "<h4 style='color:grey;'>Dernier discours enregistré :</h4>";
+echo "<h5>" . $candidat . ", le " . $pretty_print_date ." - " .  $type. " - " . $source . "</h5>";
+echo "<hr />"; 
 foreach ($text as $line) {
-	echo $line;
+	$words = explode(" ", $line);
+	foreach ($words as $word) {
+		if (isset($specificite[$word]) && $specificite[$word] > 2) {
+			echo '<span class="specificite" data-tooltip aria-haspopup="true" class="has-tip"  title="spécificité: +' . strval($specificite[$word]) .'">' . $word . '</span> ';
+		} else {
+			echo $word . " ";
+		}
+	}
 } 
 
 ?>

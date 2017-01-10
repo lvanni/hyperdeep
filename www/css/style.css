@@ -27,10 +27,18 @@ li > a {
 	background-size: 100% 200px;
 }
 
-.texte {
+.texte p{
 	font-size: 10pt;
-	font-style: italic;
 	text-align: justify;
+	color: grey;
+}
+.specificite {
+	color: black;
+	font-weight: lighter;
+}
+
+#cloud-container {
+	width: 80%;
 }
 
 .selected-menu {
@@ -39,7 +47,7 @@ li > a {
 	border-bottom: 0.4em #1097eb solid;
 }
 .selected-item {
-	color: grey;	
+	color: darkgrey;	
 }
 
 
@@ -77,3 +85,4 @@ li > a {
 	background-color: lightgrey;
 	height: 50px; 
 }
+

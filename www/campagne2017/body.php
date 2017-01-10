@@ -5,7 +5,7 @@
 
 <br />
 
-<div class="row">
+<div class="row expanded">
   <div class="texte small-12 large-7 columns" style="padding-right: 4em;">
 		<?php include 'left.php';?>
   </div>

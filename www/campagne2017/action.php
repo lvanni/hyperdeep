@@ -3,12 +3,20 @@
 // STATIC VALUES
 define("CORPUS", "Campagne2017");
 
-// GET CORPUS META-DATAs
-$metadata = json_decode(file_get_contents(API_URL . SELECT . "?" . P1 . "=" . CORPUS));
-while($metadata->status == WAITING_STAT) {
-	sleep(0.5);
-	$metadata = json_decode(file_get_contents(API_URL . SELECT . "?" . P1 . "=" . CORPUS));
+/**
+ * @param unknown $api_url_request
+ */
+function api_call($api_url_request) {
+	$result = json_decode(file_get_contents($api_url_request));
+	while(!$result || strpos($result->status, WAITING_STAT) !== false) {
+		sleep(0.5);
+		$result = json_decode(file_get_contents($api_url_request));
+	}
+	return $result;
 }
+
+// GET CORPUS META-DATAs
+$metadata = api_call(API_URL . SELECT . "?" . P1 . "=" . CORPUS);
 $partitions = $metadata->data->__VAR__;
 $date = $partitions->date;
 $discours = $partitions->discours;
@@ -25,22 +33,14 @@ if (isset($_GET["candidat"])) {
 	}
 	
 	// LAST TEXT
-	$text = json_decode(file_get_contents(API_URL . READ . "?" . P1 . "=" . CORPUS . "&partition=discours:" . $last_discours));
-	while($text->status == WAITING_STAT) {
-		sleep(0.5);
-		$text = json_decode(file_get_contents(API_URL . READ . "?" . P1 . "=" . CORPUS . "&partition=discours:" . $last_discours));
-	}
+	$text = api_call(API_URL . READ . "?" . P1 . "=" . CORPUS . "&partition=discours:" . $last_discours);
 	$text = $text->data;
 } else {
 	// LAST DISCOURS DATE
 	$last_date = reset($date);
 	
 	// LAST TEXT
-	$text = json_decode(file_get_contents(API_URL . READ . "?" . P1 . "=" . CORPUS . "&partition=date:" . $last_date));
-	while($text->status == WAITING_STAT) {
-		sleep(0.5);
-		$text = json_decode(file_get_contents(API_URL . READ . "?" . P1 . "=" . CORPUS . "&partition=date:" . $last_date));
-	}
+	$text = api_call(API_URL . READ . "?" . P1 . "=" . CORPUS . "&partition=date:" . $last_date);
 	$text = $text->data;
 }
 
@@ -56,7 +56,25 @@ $pretty_print_date = intval($date_args[2]) . " " . $mois[intval($date_args[1])-1
 $type = explode(" ", explode("type_", $first_line)[1])[0];
 $source = explode(" ", explode("source_", $first_line)[1])[0];
 
+// SPECIFICITE
+$specificite_tmp = api_call(API_URL . SPEC . "?" . P1 . "=" . CORPUS . "&partition=discours:" . $discours);
+$specificite_tmp = $specificite_tmp->data->FORME;
+$specificite = array();
+
+// THEME-CLOUD
+$words_cloud = array();
+foreach ($specificite_tmp as $s) {
+	$z = floatval($s->z);
+	$specificite[$s->word] = $z;
+	if ($z > 0) {
+		$frequency = array();
+		$frequency["text"] = $s->word;
+		$frequency["size"] = $z*10;
+		array_push($words_cloud, $frequency);
+	}
+}
 //print_r($discours);
 //print_r($candidat);
+//print_r($words_cloud);
 
 ?>

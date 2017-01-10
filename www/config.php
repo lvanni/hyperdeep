@@ -24,5 +24,6 @@ define("P2", "partition");
 // FUNCTIONS
 define("SELECT", "select.php");
 define("READ", "read.php");
+define("SPEC", "specificite.php");
 
 ?>

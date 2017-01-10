@@ -1,11 +1,11 @@
 <div class="expanded row">
   	<div class="small-12 large-3 columns">
-  		<div id="logo">
+  		<div id="logo" style="width: 100%; text-align: center;">
 			<a href="http://univ-cotedazur.fr/" target="blank"><img alt="UCA" src="www/img/uca-logo.png" /></a><br /><br />
 			<div style="width: 100%; text-align: center;">
-				<a href="http://www.cnrs.fr/" target="blank"><img alt="UCA" src="www/img/logo_cnrs.gif" /></a>&nbsp;&nbsp;
-				<a href="http://bcl.cnrs.fr/" target="blank"><img alt="UCA" src="www/img/logo_BCL.png" /></a>&nbsp;&nbsp;
-				<a href="http://unice.fr/" target="blank"><img alt="UCA" src="www/img/logo_unice.png" /></a>
+				<a href="http://www.cnrs.fr/" target="blank"><img style="width: 18%;" alt="UCA" src="www/img/logo_cnrs.gif" /></a>&nbsp;&nbsp;
+				<a href="http://bcl.cnrs.fr/" target="blank"><img style="width: 20%;" alt="UCA" src="www/img/logo_BCL.png" /></a>&nbsp;&nbsp;
+				<a href="http://unice.fr/" target="blank"><img style="width: 22%" alt="UCA" src="www/img/logo_unice.png" /></a>
 			</div>
 		</div>
 	</div>
