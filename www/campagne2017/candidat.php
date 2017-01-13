@@ -1,4 +1,4 @@
-<div class="top-bar">
+<div class="top-bar menu-candidat ">
     <ul class="dropdown menu expanded medium-text-center" >
       <?php foreach ($partitions->candidat as $candidat_i) { ?>
       	  <?php if (!strcasecmp ($candidat_i, $candidat)) { ?>

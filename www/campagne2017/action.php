@@ -7,10 +7,17 @@ define("CORPUS", "Campagne2017");
  * @param unknown $api_url_request
  */
 function api_call($api_url_request) {
-	$result = json_decode(file_get_contents($api_url_request));
-	while(!$result || strpos($result->status, WAITING_STAT) !== false) {
-		sleep(0.5);
+	
+	$request_id = hash("md5", $api_url_request);
+	if (file_exists ("www/" . CORPUS . "/cache/" . $request_id)) {
+		$result = json_decode(file_get_contents("www/" . CORPUS . "/cache/" . $request_id));
+	} else {
 		$result = json_decode(file_get_contents($api_url_request));
+		while(!$result || strpos($result->status, WAITING_STAT) !== false) {
+			sleep(0.5);
+			$result = json_decode(file_get_contents($api_url_request));
+		}
+		file_put_contents("www/" . CORPUS . "/cache/" . $request_id, json_encode($result));
 	}
 	return $result;
 }
@@ -63,16 +70,34 @@ $specificite = array();
 
 // THEME-CLOUD
 $words_cloud = array();
+$min_value = 0;
+$max_value = 0;
 foreach ($specificite_tmp as $s) {
 	$z = floatval($s->z);
-	$specificite[$s->word] = $z;
-	if ($z > 0) {
-		$frequency = array();
-		$frequency["text"] = $s->word;
-		$frequency["size"] = $z*10;
-		array_push($words_cloud, $frequency);
+	if($min_value > $z) {
+		$min_value = $z;
+	}
+	if ($max_value < $z) {
+		$max_value = $z;
 	}
 }
+$ratio = 50 / exp($max_value+abs($min_value));
+
+$cpt=0;
+foreach ($specificite_tmp as $s) {
+	if ($cpt > 100) {
+		break;
+	}
+	$z = floatval($s->z);
+	$specificite[$s->word] = $z;
+	$frequency = array();
+	$frequency["text"] = $s->word;
+	$frequency["size"] = exp($z+abs($min_value))*$ratio;
+	//echo $s->word . ": " . $frequency["size"] . "<br />";
+	array_push($words_cloud, $frequency);
+	$cpt++;
+}
+//echo $cpt . " mots";
 //print_r($discours);
 //print_r($candidat);
 //print_r($words_cloud);

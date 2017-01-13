@@ -7,13 +7,8 @@
     </ul>
   </div>
   <div class="top-bar-right">
-    <ul class="menu">
-    	<li><a href="#" target="blank"><i class="fi-social-facebook"></i></a></li>
-    	<li><a href="#" target="blank"><i class="fi-social-twitter"></i></a></li>
-    	<li><a href="#" target="blank"><i class="fi-social-500px"></i></a></li>
-    	<!-- 
-      <li><a href="http://bcl.cnrs.fr" target="blank"><i class="fi-flag"></i><strong>UMR 7320 : Bases, Corpus, Language</strong></a></li>
-       -->
-    </ul>
+    <a href="#" target="blank"><i class="fi-social-facebook social-icon" style="right: 1em;"></i></a>
+    <a href="#" target="blank"><i class="fi-social-twitter social-icon" style="right: 3em;"></i></a>
+    <a href="#" target="blank"><i class="fi-social-500px social-icon" style="right: 5em;"></i></a>
   </div>
 </div>

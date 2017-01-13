@@ -1,16 +1,8 @@
+<h5 style="margin-top: 0.4em; padding-bottom: 0.5em; border-bottom: 1px lightgrey solid;">Analyse <span class="sous-titre"> type <a href="#">Deep Learning</a></span></h5>
+<img alt="" src="www/img/result1.png"><br />
 
-<h4 style="color: grey">Les mots clés :</h4>
-<div id="cloud-container" style="text-align: center; width: 100%; border: thin #333333 solid;">
-<br />
-	
-</div>
+<br /><br />
 
-<!-- 
-<div style="text-align: center;">
-  	<h4>Analyse du discours via <a href="#"><i>Deep learning</i><a></a></h4>
-  	<br />
-  	<img alt="" src="www/img/result1.png">
-</div>
- -->
-<br />
-<a class="twitter-timeline" href="https://twitter.com/jadt2016">Tweets by jadt2016</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<h5 style="margin-top: 0.4em; padding-bottom: 0.5em; border-bottom: 1px lightgrey solid;">Statistiques <span class="sous-titre"> type <a href="#">Spécificité</a></span></h5>
+<div id="cloud-container" style="margin-top: 0em; text-align: center; width: 100%;"></div>
+

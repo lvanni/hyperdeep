@@ -2,6 +2,28 @@ body {
 	font-family: "Gentium Basic", "Arial Unicode MS", "HelveticaNeue-Light", "Helvetica Neue Light",
 		"Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-size: 10pt;
+	
+	color: #232425;
+}
+
+h1, h2, h3, h4 {
+	text-transform: uppercase;
+}
+h5 {
+	font-size: 21px;
+    font-weight: 300;
+    line-height: 24px;
+    color: #292F33;
+}
+
+.sous-titre {
+	color: grey;
+	font-size: 12px;
+	font-weight: bolder;
+}
+
+.customisable-highlight {
+	font-size: 18px;
 }
 
 .top-bar, .top-bar ul, .top-bar > ul {
@@ -56,7 +78,11 @@ li > a {
 }
 
 .profil-candidat, .profil-selected {
-	height: 50px;
+	height: 40px;
+}
+.menu-candidat{
+	
+	padding: 0px;
 }
 
 .profil-candidat {
@@ -78,11 +104,33 @@ li > a {
 
 #footer1 {
 	background-color: #333333;
+}
+
+#footer1 div {
 	height: 200px;
+	margin-bottom: 2em;
+	margin-top: 2em;
+}
+
+#footer1, #footer1 h5 {
+	color: lightgrey !important;
+	padding-bottom: 1em;
+}
+#footer1 li {
+	text-align: left;
+}
+
+.footer-icon {
+	font-size: 18pt;
 }
 
 #footer2 {
-	background-color: lightgrey;
+	background-color: white;
 	height: 50px; 
 }
 
+.social-icon {
+	position: absolute;
+	font-size: 1.5em !important;
+	color: white;
+}

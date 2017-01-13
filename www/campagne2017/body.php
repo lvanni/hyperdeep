@@ -5,12 +5,16 @@
 
 <br />
 
-<div class="row expanded">
-  <div class="texte small-12 large-7 columns" style="padding-right: 4em;">
-		<?php include 'left.php';?>
+<div id="main-container" class="row">
+
+<div class="small-12 large-3 columns">
+		<?php include 'left.php';?>   
+  </div>
+  <div class="small-12 large-6 columns texte">
+		<?php include 'center.php';?>
   </div>
   
-  <div class="small-12 large-5 columns">
+  <div class="small-12 large-3 columns">
 		<?php include 'right.php';?>   
   </div>
 </div>  

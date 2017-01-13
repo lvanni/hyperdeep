@@ -1,11 +1,39 @@
-<div id="footer1">
-	blabalbal
+<div id="footer1" class="row expanded">
+	<div class="small-12 large-4 columns" style="border-right: thin lightgrey solid;">
+	<i class="fi-flag footer-icon"></i>
+	<h5>Mesure Du Discours</h5>
+	<ul>
+	  <li>Projet de recherche <a href="http://univ-cotedazur.fr/english/idex-uca-jedi/ucajedi-project" target="blank">IDEX (JEDI)</a></li>
+	  <li>Laboratoire UMR7320 : <a href="http://bcl.cnrs.fr" target="blank">Bases, Corpus, Langage</a></li>
+	  <li>Équipe <a href="http://logometrie.unice.fr" target="blank">Logométrie</a></li>
+	</ul>
+  	</div>
+  	
+	<div class="small-12 large-4 columns" style="border-right: thin lightgrey solid;">
+	<i class="fi-info footer-icon"></i>
+	<h5>Plus d'informations</h5>
+	<ul>
+	  <li><a href="http://lexicometrica.univ-paris3.fr/jadt/jadt2016/01-ACTES/86038/86038.pdf" target="blank">Deep Learning et Discours politique</a></li>
+	  <li>ADT - Méthodes statistiques : <a href="https://fr.wikipedia.org/wiki/Hyperbase" target="blank">Hyperbase</a></li>
+	  <li>Plateforme expérimentale et API : <a href="http://hyperbase.unice.fr" target="blank">Hyperbase Web</a></li>
+	</ul>
+	</div>
+    
+    <div class="small-12 large-4 columns">
+    <i class="fi-mail footer-icon"></i>
+    <h5>Contact</h5>
+    <ul>
+	  <li>Responsables contenus & analyses : <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Damon Mayaffre</a>, <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Camille Bouzereau</a></li>
+	  <li>Responsables scientifiques : <a href="mailto:laurentDOTvanniATuniceDOTfr" target="blank">Laurent Vanni</a>, <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Frédérique Précioso</a>, <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Mélanie Ducoffe</a></li>
+	  <li>Responsable du design du site & du développement informatiques : <a href="mailto:laurentDOTvanniATuniceDOTfr" target="blank">Laurent Vanni</a></li>
+	</ul>
+    </div>
 </div>
 <div id="footer2">
 		<br />
-		<a href="#">Hyperbase Web Edition</a> - 
+		<a href="http://mesure-du-discours.unice.fr">MESURE DU DISCOURS</a> - 
 		<a href="http://logometrie.unice.fr/" target="blank">Logométrie</a> - 
-		<a href="<?php echo HTML_ROOT_PATH ?>ui/common/mentions_legales.html" target="blank">Mentions Légales</a> - 
+		<a href="mentions_legales.html" target="blank">Mentions Légales</a> - 
 		<a href="http://www.unice.fr/bcl/" target="blank">UMR 7320 : Bases, Corpus, Langage</a> - 
 		<a href="mailto:laurent.vanni@unice.fr">Contact</a>
 </div>
