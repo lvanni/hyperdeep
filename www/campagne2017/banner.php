@@ -1,5 +1,5 @@
-<div class="expanded row">
-  	<div class="small-12 large-3 columns">
+<div class="expanded row small-collapse">
+  	<div class="large-3 columns show-for-large">
   		<div id="logo" style="width: 100%; text-align: center;">
 			<a href="http://univ-cotedazur.fr/" target="blank"><img alt="UCA" src="www/img/uca-logo.png" /></a><br /><br />
 			<div style="width: 100%; text-align: center;">
@@ -9,7 +9,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="small-12 large-9 columns" style="padding-right: 0px;">
+	<div class="large-9 columns show-for-large" style="padding-right: 0px;">
 		<div id="banner">
 			<h2 style="color: white;"><a href="/" style="color: white;">Mesure du discours</a></h2>
 			<h4><a href="/" style="color: white;">Observatoire de la campagne présidentielle 2017</a></h4>
