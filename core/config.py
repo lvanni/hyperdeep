@@ -21,3 +21,9 @@ DICO_PATH   = "data/dico"
 
 EMBEDDING_DICO  = "data/dico/embedding_dico.txt"
 OCC_DICO        = "data/dico/occ_dico.txt"
+
+# TEST PARAMS
+CORPUS_SIZE = "min"
+#CORPUS_SIZE = "full"
+#CORPUS_TYPE = "cnr"
+CORPUS_TYPE = "tg"

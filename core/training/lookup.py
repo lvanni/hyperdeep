@@ -215,7 +215,7 @@ class LookUpTrain(Initializable, Feedforward):
         return T.argmax(self.apply(x), axis=1)
 
     def probabilities_text(self, x):
-	return T.mean(self.apply(x), axis=0)
+        return T.mean(self.apply(x), axis=0)
 
     @application(inputs=['x'], outputs=['output'])
     def predict_confidency(self, x):

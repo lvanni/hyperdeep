@@ -7,8 +7,10 @@ import copy
 import os
 import pickle
 
-from core.config import OCC_DICO, EMBEDDING_DICO, CORPUS_PATH, DICO_PATH
+from core.config import OCC_DICO, EMBEDDING_DICO, CORPUS_PATH, DICO_PATH, \
+	CORPUS_SIZE, CORPUS_TYPE
 import numpy as np
+
 
 # parse a document using dot
 # read line by line
@@ -67,25 +69,39 @@ def get_input_from_files(filenames, dico):
 	sentences = []
 	for filename in filenames :
 		sentences += get_input_from_file(filename, dico)
-
 	return sentences
 
 """
 TOKENIZE TEXT
 """
+def tokenize_CNR(line):
+	sequence = line.split('\t')[2:]
+	if len(sequence) != 4:
+		return False
+	sequence[3] = sequence[3][0] # Remove endline characters
+	return sequence
+
+def tokenize_TG(line):
+	sequence = line.split('\t')
+	if len(sequence) != 4:
+		return False
+	code = sequence[1].split(":")
+	sequence[1] = sequence[2]
+	sequence[2] = code[0]
+	sequence[3] = ":".join(code[1:])
+	return sequence
+	
 def get_input_from_line(filename):
 	sentences_tags=[]
-	
 	with closing(open(filename, 'rb')) as f:
 		for line in f:
-			sequence = line.split('\t')[2:]
-			if len(sequence) != 4:
-				continue
-			sequence[3] = sequence[3][0] # Remove endline characters
-			# LOWER TEXT
-			# @TODO: TEST WITHOUT LOWER  
-			sequence = [elem.lower() for elem in sequence]
-			sentences_tags.append(sequence)
+			if CORPUS_TYPE == "cnr":
+				sequence = tokenize_CNR(line)
+			elif CORPUS_TYPE == "tg":
+				sequence = tokenize_TG(line)
+			if sequence:
+				sequence = [elem.lower() for elem in sequence]
+				sentences_tags.append(sequence)
 			
 	return sentences_tags
 
@@ -157,8 +173,12 @@ def create_dico():
 	
 	corpus = []
 	for filename in os.listdir(CORPUS_PATH):
-		if ".txt" in filename:
-			corpus.append(CORPUS_PATH + filename)
+		filename_args = filename.split(".")
+		try:
+			if filename_args[-2] == CORPUS_SIZE and filename_args[-1] == CORPUS_TYPE:
+				corpus.append(CORPUS_PATH + filename)
+		except:
+			continue
 	
 	print "#######################"
 	print "Creation de l'embedding"

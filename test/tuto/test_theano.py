@@ -18,7 +18,7 @@ def tuto():
     
     # generate a dataset: D = (input_values, target_class)
     # D = [X, Y]
-    D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=2))
+    D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=6))
     training_steps = 10000 # nombre de retropropagation / backpropagation
     
     print D
@@ -73,7 +73,7 @@ def tuto():
     print("target values for D:")
     print(D[1])
     print("prediction on D:")
-    test = rng.randn(1, feats)
+    test = rng.randn(15, feats)
     print(predict(test)) # On jadt_2016 sur les valeurs de depart
 
 if __name__ == '__main__':

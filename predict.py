@@ -8,8 +8,10 @@ Created on 7 déc. 2016
 from contextlib import closing
 import os
 import pickle
+import random
 import sys
 
+import numpy
 import theano
 
 from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, \
@@ -18,6 +20,7 @@ from core.preprocess.dico import get_input_from_files
 from core.training.lookup import LookUpTrain
 from core.training.main import pre_process
 import theano.tensor as T
+
 
 if __name__ == '__main__':
     
@@ -54,18 +57,15 @@ if __name__ == '__main__':
     x_train, x_valid, x_test, y_train, y_valid, y_test = pre_process([text_to_test])
 
     # concatener des arrays numpy
-    # x_cont = np.concatenate([x_train, x_valid, x_test], axis=0)
+    #x_cont = numpy.concatenate([x_train, x_valid, x_test], axis=0)
     
     # Input features
     x = T.itensor3('x') 
     
-    # Fonction de prediction : Pour une phrase donnée, quel est le président
-    #predict = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
-
     # probabilites sur un text
-    probabilities = theano.function(inputs=[x], outputs=t_nlp.probabilities_text(x), allow_input_downcast=True)
+    #probabilities = theano.function(inputs=[x], outputs=t_nlp.probabilities_text(x), allow_input_downcast=True)
     # A TESTER
-    # probabilities(x_cont)
+    #print probabilities(x_train)
     # sinon
     # np.mean([probabilities(x_cont[index*batch_size:(index+1)*batch_size])])
     
@@ -73,10 +73,13 @@ if __name__ == '__main__':
     #predict_confidency = theano.function(inputs=[x], outputs=t_nlp.predict_confidency(x)[0], allow_input_downcast=True)
     
     # test predict
-    #corpus = []
-    #for filename in os.listdir(CORPUS_PATH):
-    #    if ".txt" in filename:
-    #        corpus.append(filename)
-    #print "predict :", corpus[predict([x_test[0]])].replace(".txt", "")
+    # Fonction de prediction : Pour une phrase donnée, quel est le président
+    predict = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
+    corpus = []
+    for filename in os.listdir(CORPUS_PATH):
+        if ".txt" in filename:
+            corpus.append(filename)
+    for test in x_test:
+        print "predict :", corpus[predict([test])].replace(".txt", "")
     
     

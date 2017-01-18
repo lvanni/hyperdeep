@@ -25,7 +25,7 @@
     <ul>
 	  <li>Responsables contenus & analyses : <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Damon Mayaffre</a>, <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Camille Bouzereau</a></li>
 	  <li>Responsables scientifiques : <a href="mailto:laurentDOTvanniATuniceDOTfr" target="blank">Laurent Vanni</a>, <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Frédérique Précioso</a>, <a href="mailto:damonDOTmayaffreATuniceDOTfr" target="blank">Mélanie Ducoffe</a></li>
-	  <li>Responsable du design du site & du développement informatiques : <a href="mailto:laurentDOTvanniATuniceDOTfr" target="blank">Laurent Vanni</a></li>
+	  <li>Responsable design & développement : <a href="mailto:laurentDOTvanniATuniceDOTfr" target="blank">Laurent Vanni</a></li>
 	</ul>
     </div>
 </div>
