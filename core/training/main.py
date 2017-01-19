@@ -65,10 +65,12 @@ def pre_process(filenames):
 		for line in lines:
 			x_value.append(line)
 			y_value.append(index)
-		if index == 0:
-			index += 1
+		#if index == 0:
+		index += 1
 	
 	y_value = np.asarray(y_value, dtype=int)
+	
+	print "DEBUG: y_value = ", y_value
 	
 	# balance the samples
 	x_value_0 = [ x_value[i] for i in range(np.argmax(y_value)+1)]# put the 0
