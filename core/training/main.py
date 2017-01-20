@@ -164,7 +164,9 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	n_mot = [len(dico[i]) for i in dico.keys()]
 	
 	# Natural Langage Processing
-	t_nlp = LookUpTrain(DWIN, n_mot, VECT_SIZE, N_HIDDEN, n_out=2)
+        nb_class = np.max(y_train)+1
+        assert np.min(y_train)==0, ('y_train should contain class labels with the first one indexed at 0 but got %d', np.min(y_train))
+	t_nlp = LookUpTrain(DWIN, n_mot, VECT_SIZE, N_HIDDEN, n_out=nb_class)
 	t_nlp.initialize()
 	#t_nlp.load(repo, filename_load)
 
