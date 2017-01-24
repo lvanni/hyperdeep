@@ -7,10 +7,8 @@ import copy
 import os
 import pickle
 
-from core.config import OCC_DICO, EMBEDDING_DICO, CORPUS_PATH, DICO_PATH, \
-	CORPUS_SIZE, CORPUS_TYPE
+from core.config import OCC_DICO, EMBEDDING_DICO, DICO_PATH
 import numpy as np
-
 
 # parse a document using dot
 # read line by line
@@ -93,15 +91,18 @@ def tokenize_TG(line):
 	
 def get_input_from_line(filename):
 	sentences_tags=[]
+	sequence = False
 	with closing(open(filename, 'rb')) as f:
-		for line in f:
-			if CORPUS_TYPE == "cnr":
-				sequence = tokenize_CNR(line)
-			elif CORPUS_TYPE == "tg":
-				sequence = tokenize_TG(line)
-			if sequence:
-				sequence = [elem.lower() for elem in sequence]
-				sentences_tags.append(sequence)
+		filetype = filename.split(".")[-1]
+		if filetype == "cnr" or filetype == "tg":
+			for line in f:
+				if filetype == "cnr":
+					sequence = tokenize_CNR(line)
+				elif filetype == "tg":
+					sequence = tokenize_TG(line)
+				if sequence:
+					sequence = [elem.lower() for elem in sequence]
+					sentences_tags.append(sequence)
 			
 	return sentences_tags
 
@@ -131,9 +132,11 @@ def build_dictionnary(corpus):
 
 	# CREATE OCC_DICO
 	print "Corpus:"
-	for filename in corpus:
-		print "\t", filename
-		dico = build_dico_from_file(filename, dico)
+	for key, filenames in corpus.iteritems():
+		print "\t" + key + ":"
+		for filename in filenames:
+			print "\t\t" + filename
+			dico = build_dico_from_file(filename, dico)
 
 	# PICKLE OCC_DICO
 	with closing(open(OCC_DICO, 'wb')) as f:
@@ -169,32 +172,24 @@ def build_dico_from_occ(occ_dico):
 			
 	return dico
 
-def create_dico():
-	
-	corpus = []
-	for filename in os.listdir(CORPUS_PATH):
-		filename_args = filename.split(".")
-		try:
-			if filename_args[-2] == CORPUS_SIZE and filename_args[-1] == CORPUS_TYPE:
-				corpus.append(CORPUS_PATH + filename)
-		except:
-			continue
+def create_dico(corpus):
 	
 	print "#######################"
 	print "Creation de l'embedding"
 	print "#######################"
 	if not os.path.exists(DICO_PATH):
 		os.makedirs(DICO_PATH)
+		
 	occ_dico = build_dictionnary(corpus)
 	embedding_dico = build_dico_from_occ(occ_dico)
 
-	print "Taille du corpus (vocabulaire):"
+	print "\nTaille du corpus (vocabulaire):"
 	print "\t", len(occ_dico[0]), "formes"
 	print "\t", len(occ_dico[1]), "lemmes"
 	print "\t", len(occ_dico[2]), "codes"
 	print "\t", len(occ_dico[3]), "fonctions"
 	
-	print "Taille de l'embedding (les tokens non present sont consideres comme RARE):"
+	print "\nTaille de l'embedding (les tokens non present sont consideres comme RARE):"
 	print "\t", len(embedding_dico[0]) - 2, "formes"
 	print "\t", len(embedding_dico[1]) - 2, "lemmes"
 	print "\t", len(embedding_dico[2]) - 2, "codes"

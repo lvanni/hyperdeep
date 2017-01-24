@@ -4,7 +4,6 @@
 # training with Collobert architecture #
 ########################################
 from contextlib import closing
-import os
 import pickle
 
 import theano
@@ -16,7 +15,6 @@ from core.training.collobert import Adam
 from core.training.lookup import LookUpTrain, getParams
 import numpy as np
 import theano.tensor as T
-
 
 def build_confusion_matrix(labels, mistakes):
 	# binary output
@@ -33,44 +31,27 @@ def build_confusion_matrix(labels, mistakes):
 	print confusion
 
 """
-def build_lookup(repo, output_dico, filename_load):
-	dwin = 9
-	with closing(open(os.path.join(repo, output_dico), 'rb')) as f:
-		dico = pickle.load(f)
-	n_mot = [len(dico[i]) for i in dico.keys()]
-	vect_size = [20, 10, 5, 5]
-	n_hidden = 25
-	x = T.imatrix('x')
-	t_nlp = LookUpTrain(dwin, n_mot, vect_size, n_hidden)
-	t_nlp.initialize()
-	t_nlp.load(repo, filename_load)
-	lookup = theano.function(inputs=[x], outputs=t_nlp.embedding(x), allow_input_downcast=True)
-	return lookup
-"""
-
-"""
 PREPROCESSING : Découpage du texte en segments de 20 mots
 Return : 3 échantillions => 1 Training ; 2 Validation ; 3 Test 
 """
-def pre_process(filenames):
-	index = 0
+def pre_process(corpus):
+	
 	y_value = []
 	x_value = []
+	
 	# Chargement de l'embedding dico
 	with closing(open(EMBEDDING_DICO, 'rb')) as f:
 		dico = pickle.load(f)
-	
-	for filename in filenames:
-		lines, _ = get_input_from_files([filename], dico)
-		for line in lines:
-			x_value.append(line)
-			y_value.append(index)
-		#if index == 0:
+
+	index = 0	
+	for key, filenames in corpus.iteritems():
+		for filename in filenames:
+			lines, _ = get_input_from_files([filename], dico)
+			for line in lines:
+				x_value.append(line)
+				y_value.append(index)
 		index += 1
-	
 	y_value = np.asarray(y_value, dtype=int)
-	
-	print "DEBUG: y_value = ", y_value
 	
 	# balance the samples
 	x_value_0 = [ x_value[i] for i in range(np.argmax(y_value)+1)]# put the 0
@@ -164,8 +145,8 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	n_mot = [len(dico[i]) for i in dico.keys()]
 	
 	# Natural Langage Processing
-        nb_class = np.max(y_train)+1
-        assert np.min(y_train)==0, ('y_train should contain class labels with the first one indexed at 0 but got %d', np.min(y_train))
+	nb_class = np.max(y_train) + 1
+	assert np.min(y_train) == 0, ('y_train should contain class labels with the first one indexed at 0 but got %d', np.min(y_train))
 	t_nlp = LookUpTrain(DWIN, n_mot, VECT_SIZE, N_HIDDEN, n_out=nb_class)
 	t_nlp.initialize()
 	#t_nlp.load(repo, filename_load)
@@ -198,11 +179,14 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	n_valid = len(y_valid)/batch_size
 	n_test = len(y_test)/batch_size
 	
-	print "n_train: ", n_train
+	print "\nn_train: ", n_train
 	print "n_valid: ", n_valid
 	print "n_test: ", n_test
 	
-	print "#############################"
+	print "\n##################"
+	print "# Start learning #"
+	print "##################"
+	
 	saving ='network_state'
 	index_filename = 0
 	
@@ -210,6 +194,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	epochs = 10 
 
 	for epoch in range(epochs):
+		break
 		index_valid = n_train
 		
 		""" TRAINING """
