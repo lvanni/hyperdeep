@@ -6,8 +6,10 @@ Created on 7 déc. 2016
 @author: lvanni
 '''
 from contextlib import closing
+import json
 import pickle
 import sys
+
 import theano
 
 from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH
@@ -15,11 +17,21 @@ from core.training.lookup import LookUpTrain
 from core.training.main import pre_process
 import theano.tensor as T
 
-
 if __name__ == '__main__':
     
-    text_to_test = {}
-    text_to_test["text"] = [sys.argv[1]] 
+    corpus = {}
+    if len(sys.argv) >= 4:
+        if sys.argv[1][-1] != "/":
+            sys.argv += "/"
+        metadata = json.load(open(sys.argv[1] + "corpus.json", "r"))
+        
+        corpus[sys.argv[3]] = []
+        for text_id in metadata[sys.argv[2]][sys.argv[3]]:
+            corpus[sys.argv[3]].append(sys.argv[1] + text_id + ".tg")
+    else:
+        corpus["text"] = [sys.argv[1]] 
+    
+    print corpus
     
     print "Chargement de l'embedding.................",
     try:
@@ -42,7 +54,7 @@ if __name__ == '__main__':
     t_nlp.load(NLP_PATH, "network_state_0")
     
     # Preprocessing => découpage du texte
-    x_train, x_valid, x_test, tmp, tmp, tmp = pre_process(text_to_test)
+    x_train, x_valid, x_test, tmp, tmp, tmp = pre_process(corpus)
 
     # concatener des arrays numpy
     #x_cont = numpy.concatenate([x_train, x_valid, x_test], axis=0)
