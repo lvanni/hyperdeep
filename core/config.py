@@ -15,10 +15,10 @@ DWIN = 20                     # Nb de mots dans une phrase
 VECT_SIZE  = [100, 10, 5, 5]  # Nb de feature associées à chaque niveau (forme/lemme/code/fonction)
 N_HIDDEN   = [100, 50]        # 2 couches : 100 neurones + 50 neurones
 
-CORPUS_PATH = "data/corpus/"
-NLP_PATH    = "data/nlp/"
-DICO_PATH   = "data/dico"
-
-EMBEDDING_DICO  = "data/dico/embedding_dico.txt"
-OCC_DICO        = "data/dico/occ_dico.txt"
+DATA_PATH   = "data/"
+CORPUS_PATH    = DATA_PATH + "corpus/"
+NLP_PATH    = DATA_PATH + "nlp/"
+DICO_PATH   = DATA_PATH + "dico/"
+EMBEDDING_DICO  = DICO_PATH + "embedding_dico.txt"
+OCC_DICO        = DICO_PATH + "occ_dico.txt"
 

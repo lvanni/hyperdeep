@@ -16,6 +16,7 @@ from core.training.lookup import LookUpTrain, getParams
 import numpy as np
 import theano.tensor as T
 
+
 def build_confusion_matrix(labels, mistakes):
 	# binary output
 	confusion = np.zeros((2,2))
@@ -183,9 +184,9 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 	print "n_valid: ", n_valid
 	print "n_test: ", n_test
 	
-	print "\n##################"
-	print "# Start learning #"
-	print "##################"
+	print "\n##############"
+	print "Start learning"
+	print "##############"
 	
 	saving ='network_state'
 	index_filename = 0
@@ -236,12 +237,13 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test):
 			y_value = y_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
 			test_value = test_model(sentence, y_value)
 			test_cost.append(test_value)
-			#print "predict :", predict([sentence[0]])
+			#print "predpredict predpredictntence[0]])
 			#print "predict_confidency :", predict_confidency([sentence[0]])
 		print "Test : " + str(np.mean(test_cost)*100)
 		"""
 		index_filename += 1
 
 	t_nlp.save(NLP_PATH, saving) # Sauvegarde du reseau à chaque iteration
+	print "DONE."
 	return
 

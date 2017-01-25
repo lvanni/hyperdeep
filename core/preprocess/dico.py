@@ -10,6 +10,7 @@ import pickle
 from core.config import OCC_DICO, EMBEDDING_DICO, DICO_PATH
 import numpy as np
 
+
 # parse a document using dot
 # read line by line
 def generate_incorrect_sentence(dico, correct_sentence, index):
@@ -70,15 +71,8 @@ def get_input_from_files(filenames, dico):
 	return sentences
 
 """
-TOKENIZE TEXT
+TOKENIZE TEXT (TreeTagged text)
 """
-def tokenize_CNR(line):
-	sequence = line.split('\t')[2:]
-	if len(sequence) != 4:
-		return False
-	sequence[3] = sequence[3][0] # Remove endline characters
-	return sequence
-
 def tokenize_TG(line):
 	sequence = line.split('\t')
 	if len(sequence) != 4:
@@ -93,17 +87,11 @@ def get_input_from_line(filename):
 	sentences_tags=[]
 	sequence = False
 	with closing(open(filename, 'rb')) as f:
-		filetype = filename.split(".")[-1]
-		if filetype == "cnr" or filetype == "tg":
-			for line in f:
-				if filetype == "cnr":
-					sequence = tokenize_CNR(line)
-				elif filetype == "tg":
-					sequence = tokenize_TG(line)
-				if sequence:
-					sequence = [elem.lower() for elem in sequence]
-					sentences_tags.append(sequence)
-			
+		for line in f:
+			sequence = tokenize_TG(line)
+			if sequence:
+				sequence = [elem.lower() for elem in sequence]
+				sentences_tags.append(sequence)
 	return sentences_tags
 
 """

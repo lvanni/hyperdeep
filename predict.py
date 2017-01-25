@@ -6,7 +6,6 @@ Created on 7 déc. 2016
 @author: lvanni
 '''
 from contextlib import closing
-import json
 import pickle
 import sys
 
@@ -20,16 +19,7 @@ import theano.tensor as T
 if __name__ == '__main__':
     
     corpus = {}
-    if len(sys.argv) >= 4:
-        if sys.argv[1][-1] != "/":
-            sys.argv += "/"
-        metadata = json.load(open(sys.argv[1] + "corpus.json", "r"))
-        
-        corpus[sys.argv[3]] = []
-        for text_id in metadata[sys.argv[2]][sys.argv[3]]:
-            corpus[sys.argv[3]].append(sys.argv[1] + text_id + ".tg")
-    else:
-        corpus["text"] = [sys.argv[1]] 
+    corpus["text"] = [sys.argv[1]] 
     
     print corpus
     
