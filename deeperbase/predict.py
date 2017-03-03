@@ -10,7 +10,7 @@ import os
 import pickle
 import sys
 
-from deeperbase.core.config import NLP, DICO_PATH
+from core.config import NLP, DICO_PATH
 import theano
 
 from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH

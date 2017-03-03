@@ -183,6 +183,8 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	epochs = 10 
 
 	for epoch in range(epochs):
+
+		break
 		
 		""" TRAINING """
 		for minibatch_index in range(n_train):
