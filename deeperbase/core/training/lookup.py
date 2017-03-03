@@ -17,6 +17,8 @@ from blocks.roles import add_role, WEIGHT, BIAS
 from blocks.utils import shared_floatx_nans
 import theano
 
+from core.config import NLP_PATH, NLP
+
 import theano.tensor as T
 
 
@@ -253,7 +255,7 @@ class LookUpTrain(Initializable, Feedforward):
     def get_Params(self):
         return self.window.get_Params()
 
-    def save(self, repo, filename):
+    def save(self, repo=NLP_PATH, filename=NLP):
         params = getParams(self, T.itensor3())
         with closing(open(os.path.join(repo, filename), 'wb')) as f:
             pickle.dump(params, f, protocol=pickle.HIGHEST_PROTOCOL)

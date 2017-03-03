@@ -203,7 +203,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 					valid_value = test_model(sentence, y_value)
 					valid_cost.append(valid_value)
 				if valid_cost <best_valid:
-					t_nlp.save(repo, filename) # rajouter option repo et filename pour enregistrer
+					t_nlp.save() # rajouter option repo et filename pour enregistrer
 					best_valid = valid_cost
 				print ("Valid : " + str(np.mean(valid_cost)*100))
 
