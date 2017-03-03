@@ -8,13 +8,13 @@ Created on 7 déc. 2016
 
 # Back prop
 #LEARNING_RATE = 1e-2
-LEARNING_RATE = 1e-3
-DECACY_RATE   = 0.4
+LEARNING_RATE = 1e-1
+DECACY_RATE   = 0.4 # 0.9
 BATCH_SIZE    = 32
 
 DWIN = 20                     # Nb de mots dans une phrase
 VECT_SIZE  = [100, 10, 5, 5]  # Nb de feature associées à chaque niveau (forme/lemme/code/fonction)
-N_HIDDEN   = [100, 50]        # 2 couches : 100 neurones + 50 neurones
+N_HIDDEN   = [100, 50]        # 2 couches : 100 neurones + 50 neurones => [50,300]
 
 # DEFAULT PATH
 DATA_PATH   = "../data/"

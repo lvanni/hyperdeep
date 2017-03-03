@@ -55,7 +55,7 @@ if __name__ == '__main__':
     t_nlp = training(x_train, x_valid, x_test, y_train, y_valid, y_test, embedding_dico)
     
     # saving network state
-    if not os.path.exists(NLP_PATH):
-        os.makedirs(NLP_PATH)
-    t_nlp.save(NLP_PATH + NLP)
+    #if not os.path.exists(NLP_PATH):
+    #    os.makedirs(NLP_PATH)
+    #t_nlp.save(NLP_PATH + NLP)
     
