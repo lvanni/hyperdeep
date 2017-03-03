@@ -10,8 +10,8 @@ import pickle
 from blocks.utils import shared_floatx
 import theano
 
-from deeperbase.core.preprocess.dico import get_input_from_files, add_padding
-from deeperbase.core.training.lookup import getParams
+from core.preprocess.dico import get_input_from_files, add_padding
+from core.training.lookup import getParams
 import numpy as np
 import theano.tensor as T
 
@@ -151,7 +151,7 @@ def training_committee_member(instance, learning_rate, decay_rate, train, valid,
 			Params.append(p)
 	#updates = RMSProp(cost, params, learning_rate, decay_rate)
 	if len(Params)!=2:
-		print 'PROBLEM !'
+		print('PROBLEM !')
 	updates,_ = Adam(cost, params, learning_rate) # *0.1 ???
 	train_model = theano.function(inputs=[x,y], outputs=cost, updates=updates,
 					allow_input_downcast=True)
@@ -185,8 +185,8 @@ def training_committee_member(instance, learning_rate, decay_rate, train, valid,
 		else:
 			increment -=1
 		"""
-	print np.mean(valid_cost)*100
-	print '####'
+	print (np.mean(valid_cost)*100)
+	print ('####')
 	return instance
 	
 def training_committee(committee, learning_rate, decay_rate, train, valid, batch_size):

@@ -10,7 +10,7 @@ from contextlib import closing
 import os
 import pickle
 
-from deeperbase.core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO, NLP_PATH, CORPUS_PATH, NLP
+from core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO, NLP_PATH, CORPUS_PATH, NLP
 from core.preprocess.dico import create_dico
 from core.training.main import pre_process, training
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         # on charge le dico
         with closing(open(DICO_PATH + EMBEDDING_DICO, 'rb')) as f:
             embedding_dico = pickle.load(f)
-        print "start training from a previous state... (use command option [-c] to clean the project first)"
+        print("start training from a previous state... (use command option [-c] to clean the project first)")
     
     # decoupage des textes
     x_train, x_valid, x_test, y_train, y_valid, y_test = pre_process(corpus, embedding_dico)

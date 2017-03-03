@@ -25,21 +25,21 @@ if __name__ == '__main__':
     corpus = {}
     corpus["text"] = [sys.argv[1]]
     
-    print "Chargement de l'embedding.................",
+    print("Chargement de l'embedding................."),
     try:
         with closing(open(DICO_PATH + EMBEDDING_DICO, 'rb')) as f:
             dico = pickle.load(f)
     except:
-        print "ERR"
-        print "missing training files!"
+        print("ERR")
+        print("missing training files!")
         sys.exit(0)
     
-    print  "OK"
+    print  ("OK")
     
-    print "Chargement du réseau......................",
+    print ("Chargement du réseau......................"),
     # Nb mot dans le dico/corpus
     n_mot = [len(dico[i]) for i in dico.keys()]
-    print  "OK"
+    print  ("OK")
     
     # Natural Langage Processing
     t_nlp = LookUpTrain(DWIN, n_mot, VECT_SIZE, N_HIDDEN)
@@ -65,5 +65,5 @@ if __name__ == '__main__':
     probabilities = theano.function(inputs=[x], outputs=t_nlp.probabilities_text(x), allow_input_downcast=True)
     
     proba_list = probabilities(x_test)
-    print proba_list    
+    print (proba_list)    
     

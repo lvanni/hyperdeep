@@ -8,10 +8,10 @@ import pickle
 
 import theano
 
-from deeperbase.core.config import DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, LEARNING_RATE, BATCH_SIZE
-from deeperbase.core.preprocess.dico import get_input_from_files, add_padding
-from deeperbase.core.training.collobert import Adam
-from deeperbase.core.training.lookup import LookUpTrain, getParams
+from core.config import DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, LEARNING_RATE, BATCH_SIZE
+from core.preprocess.dico import get_input_from_files, add_padding
+from core.training.collobert import Adam
+from core.training.lookup import LookUpTrain, getParams
 import numpy as np
 import theano.tensor as T
 
@@ -28,7 +28,7 @@ def build_confusion_matrix(labels, mistakes):
 	totals = [sum(confusion[0]), sum(confusion[1])]
 	confusion[0] /= totals[0]
 	confusion[1] /= totals[1]
-	print confusion
+	print (confusion)
 
 """
 PREPROCESSING : Découpage du texte en segments de 20 mots
@@ -171,19 +171,18 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	n_valid = len(y_valid)/batch_size
 	n_test = len(y_test)/batch_size
 	
-	print "\nn_train: ", n_train
-	print "n_valid: ", n_valid
-	print "n_test: ", n_test
+	print ("\nn_train: ", n_train)
+	print ("n_valid: ", n_valid)
+	print ("n_test: ", n_test)
 	
-	print "\n##############"
-	print "Start learning"
-	print "##############"
+	print ("\n##############")
+	print ("Start learning")
+	print ("##############")
 	
 	# number of iterations on the corpus
 	epochs = 10 
 
 	for epoch in range(epochs):
-		break
 		
 		""" TRAINING """
 		for minibatch_index in range(n_train):
@@ -203,8 +202,8 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 					sentence = x_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
 					valid_value = test_model(sentence, y_value)
 					valid_cost.append(valid_value)
-				print "Valid : " + str(np.mean(valid_cost)*100)
+				print ("Valid : " + str(np.mean(valid_cost)*100))
 
-	print "DONE."
+	print ("DONE.")
 	return t_nlp
 

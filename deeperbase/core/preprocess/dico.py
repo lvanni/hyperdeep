@@ -7,7 +7,7 @@ import copy
 import os
 import pickle
 
-from deeperbase.core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO
+from core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO
 
 import numpy as np
 
@@ -120,11 +120,11 @@ def build_dictionnary(corpus):
 	dico[0]={}; dico[1]={}; dico[2]={}; dico[3]={}
 
 	# CREATE OCC_DICO
-	print "Corpus:"
+	print ("Corpus:")
 	for key, filenames in corpus.iteritems():
-		print "\t" + key + ":"
+		print ("\t" + key + ":")
 		for filename in filenames:
-			print "\t\t" + filename
+			print ("\t\t" + filename)
 			dico = build_dico_from_file(filename, dico)
 
 	return dico
@@ -156,22 +156,22 @@ def build_dico_from_occ(occ_dico):
 
 def create_dico(corpus):
 	
-	print "#######################"
-	print "Creation de l'embedding"
-	print "#######################"
+	print ("#######################")
+	print ("Creation de l'embedding")
+	print ("#######################")
 	occ_dico = build_dictionnary(corpus)
 	embedding_dico = build_dico_from_occ(occ_dico)
 
-	print "\nTaille du corpus (vocabulaire):"
-	print "\t", len(occ_dico[0]), "formes"
-	print "\t", len(occ_dico[1]), "lemmes"
-	print "\t", len(occ_dico[2]), "codes"
-	print "\t", len(occ_dico[3]), "fonctions"
+	print ("\nTaille du corpus (vocabulaire):")
+	print ("\t", len(occ_dico[0]), "formes")
+	print ("\t", len(occ_dico[1]), "lemmes")
+	print ("\t", len(occ_dico[2]), "codes")
+	print ("\t", len(occ_dico[3]), "fonctions")
 	
-	print "\nTaille de l'embedding (les tokens non present sont consideres comme RARE):"
-	print "\t", len(embedding_dico[0]) - 2, "formes"
-	print "\t", len(embedding_dico[1]) - 2, "lemmes"
-	print "\t", len(embedding_dico[2]) - 2, "codes"
-	print "\t", len(embedding_dico[3]) - 2, "fonctions"
+	print ("\nTaille de l'embedding (les tokens non present sont consideres comme RARE):")
+	print ("\t", len(embedding_dico[0]) - 2, "formes")
+	print ("\t", len(embedding_dico[1]) - 2, "lemmes")
+	print ("\t", len(embedding_dico[2]) - 2, "codes")
+	print ("\t", len(embedding_dico[3]) - 2, "fonctions")
 
 	return occ_dico, embedding_dico
