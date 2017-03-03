@@ -2,6 +2,7 @@
 # -*-coding:Utf-8 -*
 
 # blocks class 
+import os
 from contextlib import closing
 import logging
 import pickle
@@ -252,7 +253,7 @@ class LookUpTrain(Initializable, Feedforward):
     def get_Params(self):
         return self.window.get_Params()
 
-    def save(self, filename):
+    def save(self, repo, filename):
         params = getParams(self, T.itensor3())
-        with closing(open(filename, 'wb')) as f:
+        with closing(open(os.path.join(repo, filename), 'wb')) as f:
             pickle.dump(params, f, protocol=pickle.HIGHEST_PROTOCOL)
