@@ -181,7 +181,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	
 	# number of iterations on the corpus
 	epochs = 10 
-        best_valid = np.inf
+	best_valid = 0
 	for epoch in range(epochs):
 		
 		""" TRAINING """
@@ -202,21 +202,21 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 					sentence = x_valid[minibatch_valid*batch_size:(minibatch_valid+1)*batch_size]
 					valid_value = test_model(sentence, y_value)
 					valid_cost.append(valid_value)
-				if valid_cost <best_valid:
+				valid_cost = np.mean(valid_cost)*100
+				print ("Valid : " + str(valid_cost))
+				if valid_cost > best_valid:
 					t_nlp.save() # rajouter option repo et filename pour enregistrer
 					best_valid = valid_cost
-				print ("Valid : " + str(np.mean(valid_cost)*100))
+					print ("saving network...")
 
-				""" TRAINING """
-				# Validation => permet de controller la plus value d'un nouvel entrainement
-				# On peut arreter l'entrainement si plus aucune evolution.
-				training_cost=[]
-				for minibatch_training in range(n_train):
-					y_value = y_valid[minibatch_training*batch_size:(minibatch_training+1)*batch_size]
-					sentence = x_valid[minibatch_training*batch_size:(minibatch_training+1)*batch_size]
-					training_value = test_model(sentence, y_value)
-					training_cost.append(training_value)
-				print ("Train : " + str(np.mean(training_cost)*100))
+				""" TEST """
+				test_cost=[]
+				for minibatch_test in range(n_test):
+					sentence = x_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
+					y_value = y_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
+					test_value = test_model(sentence, y_value)
+					test_cost.append(test_value)
+				print ("Train : " + str(np.mean(test_cost)*100))
 
 	print ("DONE.")
 	return t_nlp
