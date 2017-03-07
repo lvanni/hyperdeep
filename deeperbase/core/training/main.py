@@ -10,7 +10,7 @@ import theano
 
 from core.config import DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, LEARNING_RATE, BATCH_SIZE
 from core.preprocess.dico import get_input_from_files, add_padding
-from core.training.collobert import Adam
+from core.training.collobert import Adam, SGD
 from core.training.lookup import LookUpTrain, getParams
 import numpy as np
 import theano.tensor as T
@@ -34,7 +34,7 @@ def build_confusion_matrix(labels, mistakes):
 PREPROCESSING : Découpage du texte en segments de 20 mots
 Return : 3 échantillions => 1 Training ; 2 Validation ; 3 Test 
 """
-def pre_process(corpus, dico):
+def pre_process(corpus, dico, train_percentage=0.8, valid_percentage=0.1, test_percentage=0.1):
 	
 	y_value = []
 	x_value = []
@@ -42,12 +42,32 @@ def pre_process(corpus, dico):
 	index = 0	
 	for key, filenames in corpus.iteritems():
 		for filename in filenames:
-			lines, _ = get_input_from_files([filename], dico)
+			lines = get_input_from_files([filename], dico)
 			for line in lines:
 				x_value.append(line)
 				y_value.append(index)
 		index += 1
 	y_value = np.asarray(y_value, dtype=int)
+        n = len(y_value)
+	assert train_percentage + valid_percentage+test_percentage==1, 'error splitting percentage'
+	
+	permutation = np.random.permutation(n)
+	n_train = (int) (train_percentage*n)
+	n_valid = (int) (valid_percentage*n)
+	n_test = (int) (test_percentage*n)
+
+	x_train_ = [ x_value[permutation[i]] for i in range(n_train) ]
+	y_train_ = y_value[ permutation[:n_train]]
+
+	x_valid_ = [ x_value[permutation[i]] for i in range(n_train, n_train+n_valid) ]
+	y_valid_ = y_value[ permutation[n_train:n_train+n_valid]]
+
+	x_test_ = [ x_value[permutation[i]] for i in range(n_train+n_valid, n) ]
+	y_test_ = y_value[ permutation[n_train+n_valid:n]]
+
+
+	"""
+	import pdb; pdb.set_trace()
 	
 	# balance the samples
 	x_value_0 = [ x_value[i] for i in range(np.argmax(y_value)+1)]# put the 0
@@ -78,6 +98,8 @@ def pre_process(corpus, dico):
 	y_test = [y_value_0[i] for i in pos_permut[pos_percentage+other_pos_percentage:]] + \
 		  [y_value_1[i] for i in neg_permut[neg_percentage+other_neg_percentage:]]
 
+
+
 	index_train = np.random.permutation(len(y_train))
 	index_valid = np.random.permutation(len(y_valid))
 	index_test = np.random.permutation(len(y_test))
@@ -89,7 +111,7 @@ def pre_process(corpus, dico):
 	y_train_ = [y_train[i] for i in index_train]
 	y_valid_ = [y_valid[i] for i in index_valid]
 	y_test_ = [y_test[i] for i in index_test]
-
+	"""
 	# decoupage des phrases en padding
 	# padding => pour combler le manque de mots
 	paddings = [ [], [], [], []]
@@ -118,6 +140,7 @@ def pre_process(corpus, dico):
 			x_test.append(elem[:,i:i+DWIN])
 			y_test.append(label)
 
+	"""
 	# Melange l'ordre des phrases (pas des mots dans la phrase...)
 	index_train = np.random.permutation(len(y_train))
 	index_valid = np.random.permutation(len(y_valid))
@@ -128,7 +151,7 @@ def pre_process(corpus, dico):
 	y_train = [y_train[i] for i in index_train]
 	y_valid = [y_valid[i] for i in index_valid]
 	y_test = [y_test[i] for i in index_test]
-
+	"""
 	return x_train, x_valid, x_test, y_train, y_valid, y_test
 
 def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
@@ -151,7 +174,9 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	error = T.mean(t_nlp.errors(x,y))
 
 	params = getParams(t_nlp, x)
+
 	updates, _ = Adam(cost, params, LEARNING_RATE) # Back Propagation
+	#updates, _ = SGD(cost, params, LEARNING_RATE) # Back Propagation
 
 	# Entrainement du modele
 	train_model = theano.function(inputs=[x,y], outputs=cost, updates=updates,
@@ -162,6 +187,8 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	
 	# Test => Nombre d'err du reseau
 	test_model = theano.function(inputs=[x, y], outputs=error, allow_input_downcast=True)
+
+	prediction = theano.function(inputs=[x], outputs=t_nlp.predict(x), allow_input_downcast=True)
 	
 	"""
 	Entrainement
@@ -178,10 +205,11 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	print ("\n##############")
 	print ("Start learning")
 	print ("##############")
-	
+
 	# number of iterations on the corpus
 	epochs = 10 
-	best_valid = 0
+	best_valid = 200.
+
 	for epoch in range(epochs):
 		
 		""" TRAINING """
@@ -204,19 +232,20 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 					valid_cost.append(valid_value)
 				valid_cost = np.mean(valid_cost)*100
 				print ("Valid : " + str(valid_cost))
-				if valid_cost > best_valid:
+				if valid_cost < best_valid:
 					t_nlp.save() # rajouter option repo et filename pour enregistrer
 					best_valid = valid_cost
 					print ("saving network...")
-
 				""" TEST """
+				"""
 				test_cost=[]
-				for minibatch_test in range(n_test):
-					sentence = x_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
-					y_value = y_test[minibatch_test*batch_size:(minibatch_test+1)*batch_size]
+				for minibatch_train in range(n_train):
+					sentence = x_train[minibatch_train*batch_size:(minibatch_train+1)*batch_size]
+					y_value = y_train[minibatch_train*batch_size:(minibatch_train+1)*batch_size]
 					test_value = test_model(sentence, y_value)
 					test_cost.append(test_value)
 				print ("Train : " + str(np.mean(test_cost)*100))
+				"""
 
 	print ("DONE.")
 	return t_nlp

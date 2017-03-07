@@ -87,8 +87,8 @@ class Window(Initializable, Feedforward):
         self.n_hidden = n_hidden
         self.n_out = n_out # Nombre de classes en sortie
         self.n_tables = len(self.vect_size)
-        self.tables = [LookUpTable(self.vect_size[i], self.n_mot[i], weights_init=IsotropicGaussian(0.001), use_bias=False) for i in range(self.n_tables)]
-        self.mlp = MLP(activations=[Tanh()]*len(self.n_hidden)+[Identity()], dims=[self.dwin*sum(self.vect_size)]+ self.n_hidden + [self.n_out], weights_init=IsotropicGaussian(0.001), biases_init=Constant(0.))
+        self.tables = [LookUpTable(self.vect_size[i], self.n_mot[i], weights_init=IsotropicGaussian(0.01), use_bias=False) for i in range(self.n_tables)]
+        self.mlp = MLP(activations=[Tanh()]*len(self.n_hidden)+[Identity()], dims=[self.dwin*sum(self.vect_size)]+ self.n_hidden + [self.n_out], weights_init=IsotropicGaussian(0.01), biases_init=Constant(0.))
         self.parameters = []
         self.children = self.tables + [self.mlp]
 

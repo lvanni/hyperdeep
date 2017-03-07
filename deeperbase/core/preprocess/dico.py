@@ -45,12 +45,14 @@ def get_input_from_file(filename, dico, padding=[]):
 		rare = [dico[0]['RARE'], dico[1]['RARE'],
 			dico[2]['RARE'], dico[3]['RARE']]
 		for words in f:
-			tags = words.split('\t')[2:]
-			tags = [tag.lower() for tag in tags]
-			if len(tags)==0:
+			if words[:8]=='__PARA__':
 				continue
-			line.append(tags)
-			if tags[0]=='.':
+			sequence = tokenize_TG(words)
+			if not sequence:
+				continue
+			sequence = [elem.lower() for elem in sequence]
+			line.append(sequence)
+			if sequence[2]=='sent':
 				lemme = np.zeros((4, len(line))).astype(int)
 				for i in range(len(line)):
 					if len(line[i])<4:
@@ -63,12 +65,13 @@ def get_input_from_file(filename, dico, padding=[]):
 				word_sentences.append(line)
 				line = []
 
-	return sentences, word_sentences
+	return sentences
 
 def get_input_from_files(filenames, dico):
 	sentences = []
 	for filename in filenames :
 		sentences += get_input_from_file(filename, dico)
+
 	return sentences
 
 """

@@ -8,7 +8,7 @@ Created on 7 déc. 2016
 
 # Back prop
 #LEARNING_RATE = 1e-2
-LEARNING_RATE = 1e-1
+LEARNING_RATE = 1e-3
 DECACY_RATE   = 0.4 # 0.9
 BATCH_SIZE    = 32
 

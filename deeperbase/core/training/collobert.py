@@ -39,6 +39,14 @@ def Adam(cost, params, lr=0.002, b1=0.1, b2=0.001, e=1e-8):
 	
 	return updates, updates_reinit
 
+def SGD(cost, params, learning_rate):
+	updates =[]
+	grad_params = T.grad(cost, params)
+	for param, grad_param in zip(params, grad_params):
+		update_param = param  - learning_rate*grad_param
+		updates.append((param, update_param))
+	return updates, None
+
 def RMSProp(cost, params, learning_rate, decay_rate):
 	updates =[]
 	grad_params = T.grad(cost, params)
