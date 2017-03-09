@@ -173,7 +173,7 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 	cost = T.mean(t_nlp.cost(x, y))
 	error = T.mean(t_nlp.errors(x,y))
 
-	params = getParams(t_nlp, x)
+	params = t_nlp.getParams()
 
 	updates, _ = Adam(cost, params, LEARNING_RATE) # Back Propagation
 	#updates, _ = SGD(cost, params, LEARNING_RATE) # Back Propagation

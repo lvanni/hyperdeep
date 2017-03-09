@@ -241,8 +241,8 @@ class LookUpTrain(Initializable, Feedforward):
         for p, p_value in zip(params, params_value):
             p.set_value(p_value.get_value())
 
-    def get_Params(self):
-        return self.window.get_Params()
+    def getParams(self):
+        return self.window.getParams()
 
     def save(self, repo=NLP_PATH, filename=NLP):
         params = self.window.getParams()
