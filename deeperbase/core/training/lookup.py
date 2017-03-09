@@ -140,7 +140,8 @@ class Window(Initializable, Feedforward):
         if theano.config.device=='gpu':
 	    return W_mlp + W_tables + B_mlp
 	else:
-            return W_tables + W_mlp + B_mlp
+            W_mlp = W_mlp[::-1]
+            return W_mlp + W_tables + B_mlp
 
 
     @application(inputs=['input_'], outputs=['output'])
