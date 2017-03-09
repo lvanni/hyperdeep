@@ -17,6 +17,7 @@ from deeperbase.core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NL
 from deeperbase.core.training.lookup import LookUpTrain
 from deeperbase.core.training.main import pre_process
 import theano.tensor as T
+import numpy as np
 
 
 if __name__ == '__main__':
@@ -24,7 +25,6 @@ if __name__ == '__main__':
     # récuperation du texte
     corpus = {}
     corpus["text"] = [sys.argv[1]]
-    
     print("Chargement de l'embedding................."),
     try:
         with closing(open(DICO_PATH + EMBEDDING_DICO, 'rb')) as f:
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     
     # Preprocessing => découpage du texte
     x_train, x_valid, x_test, tmp, tmp, tmp = pre_process(corpus, dico)
+    x_data = np.concatenate([x_train, x_valid, x_test], axis=0)
 
     # concatener des arrays numpy
     #x_cont = numpy.concatenate([x_train, x_valid, x_test], axis=0)
@@ -65,6 +66,6 @@ if __name__ == '__main__':
     # probabilites sur un text
     probabilities = theano.function(inputs=[x], outputs=t_nlp.probabilities_text(x), allow_input_downcast=True)
     
-    proba_list = probabilities(x_test)
+    proba_list = probabilities(x_data)
     print (proba_list)    
     
