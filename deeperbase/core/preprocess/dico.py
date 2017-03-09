@@ -7,7 +7,7 @@ import copy
 import os
 import pickle
 
-from core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO
+from deeperbase.core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO
 
 import numpy as np
 

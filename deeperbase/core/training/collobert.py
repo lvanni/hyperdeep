@@ -10,8 +10,8 @@ import pickle
 from blocks.utils import shared_floatx
 import theano
 
-from core.preprocess.dico import get_input_from_files, add_padding
-from core.training.lookup import getParams
+from deeperbase.core.preprocess.dico import get_input_from_files, add_padding
+from deeperbase.core.training.lookup import getParams
 import numpy as np
 import theano.tensor as T
 

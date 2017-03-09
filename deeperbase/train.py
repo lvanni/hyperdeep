@@ -10,9 +10,9 @@ from contextlib import closing
 import os
 import pickle
 
-from core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO, NLP_PATH, CORPUS_PATH, NLP
-from core.preprocess.dico import create_dico
-from core.training.main import pre_process, training
+from deeperbase.core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO, NLP_PATH, CORPUS_PATH, NLP
+from deeperbase.core.preprocess.dico import create_dico
+from deeperbase.core.training.main import pre_process, training
 
 if __name__ == '__main__':
     

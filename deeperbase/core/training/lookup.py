@@ -2,9 +2,9 @@
 # -*-coding:Utf-8 -*
 
 # blocks class 
-import os
 from contextlib import closing
 import logging
+import os
 import pickle
 
 from blocks.bricks import Initializable, Feedforward, MLP, Tanh, Softmax, Identity
@@ -15,9 +15,8 @@ from blocks.graph import ComputationGraph
 from blocks.initialization import IsotropicGaussian, Constant
 from blocks.roles import add_role, WEIGHT, BIAS
 from blocks.utils import shared_floatx_nans
+from deeperbase.core.config import NLP_PATH, NLP
 import theano
-
-from core.config import NLP_PATH, NLP
 
 import theano.tensor as T
 
@@ -138,8 +137,8 @@ class Window(Initializable, Feedforward):
         W_tables = [params_tables[i][0][0] for i in range(self.n_tables)]
         W_tables = W_tables[::-1]
         if theano.config.device=='gpu':
-	    return W_mlp + W_tables + B_mlp
-	else:
+            return W_mlp + W_tables + B_mlp
+        else:
             W_mlp = W_mlp[::-1]
             return W_mlp + W_tables + B_mlp
 
@@ -247,7 +246,7 @@ class LookUpTrain(Initializable, Feedforward):
 
     def save(self, repo=NLP_PATH, filename=NLP):
         params = self.window.getParams()
-	params_value = [p.get_value() for p in params]
+        params_value = [p.get_value() for p in params]
         #params = getParams(self, T.itensor3())
         with closing(open(os.path.join(repo, filename), 'wb')) as f:
             pickle.dump(params_value, f, protocol=pickle.HIGHEST_PROTOCOL)

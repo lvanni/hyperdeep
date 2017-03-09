@@ -8,10 +8,10 @@ import pickle
 
 import theano
 
-from core.config import DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, LEARNING_RATE, BATCH_SIZE
-from core.preprocess.dico import get_input_from_files, add_padding
-from core.training.collobert import Adam, SGD
-from core.training.lookup import LookUpTrain, getParams
+from deeperbase.core.config import DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH, LEARNING_RATE, BATCH_SIZE
+from deeperbase.core.preprocess.dico import get_input_from_files, add_padding
+from deeperbase.core.training.collobert import Adam, SGD
+from deeperbase.core.training.lookup import LookUpTrain, getParams
 import numpy as np
 import theano.tensor as T
 

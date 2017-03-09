@@ -10,12 +10,12 @@ import os
 import pickle
 import sys
 
-from core.config import NLP, DICO_PATH
+from deeperbase.core.config import NLP, DICO_PATH
 import theano
 
-from core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH
-from core.training.lookup import LookUpTrain
-from core.training.main import pre_process
+from deeperbase.core.config import EMBEDDING_DICO, DWIN, VECT_SIZE, N_HIDDEN, NLP_PATH
+from deeperbase.core.training.lookup import LookUpTrain
+from deeperbase.core.training.main import pre_process
 import theano.tensor as T
 
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # Natural Langage Processing
     t_nlp = LookUpTrain(DWIN, n_mot, VECT_SIZE, N_HIDDEN)
     t_nlp.initialize()
-				
+    
     # get the last networkstate
     netstate = "network_state"
     for filename in os.listdir(NLP_PATH):
