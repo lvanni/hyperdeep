@@ -28,9 +28,9 @@ def getParams(model, tensor):
     x = T.tensor4()
     cost = model.apply(tensor).sum()
     cg = ComputationGraph(cost)
-    W = VariableFilter(roles=[WEIGHT])(cg.variables)
     B = VariableFilter(roles=[BIAS])(cg.variables)
-    return W+B
+    W = VariableFilter(roles=[WEIGHT])(cg.variables)
+    return W , B
 
 class LookUpTable(Initializable, Feedforward):
 
@@ -130,30 +130,18 @@ class Window(Initializable, Feedforward):
             index_row+=p_value.shape[1]
             index_col+=p_value.shape[0]
 
-    def get_Params(self):
-        params = getParams(self.mlp, T.matrix())
-        self.update_transition_matrix()
-        weights=[]
-        biases=[]
-        for p in params:
-            if p.ndim==1:
-                biases.append(p)
-            else:
-                weights.append(p)
-            if len(params[0].name) == 1:
-                # words has not been renamed yet
-                if weights[0].shape[-1].eval() == self.n_out:
-                    weights.reverse(); biases.reverse()
-                # add the lookuptables weights
-                weights = [self.parameters[0]] + weights
-                assert len(weights)==len(biases)+1
-                for w, index in zip(weights, range(len(weights))):
-                    w.name = "layer_"+str(index)+"_"+w.name
-                for b, index in zip(biases, range(len(biases))):
-                    b.name = "layer_"+str(index+len(weights)-len(biases))+"_"+b.name
-            else:
-                weights = [self.parameters[0]] + weights
-        return weights, biases
+    def getParams(self):
+
+        W_mlp, B_mlp = getParams(self.mlp, T.matrix())
+        # detect gpu or cpu
+        params_tables = [getParams(self.tables[i], T.imatrix()) for i in range(self.n_tables)]
+        W_tables = [params_tables[i][0][0] for i in range(self.n_tables)]
+        W_tables = W_tables[::-1]
+        if theano.config.device=='gpu':
+	    return W_mlp + W_tables + B_mlp
+	else:
+            return W_tables + W_mlp + B_mlp
+
 
     @application(inputs=['input_'], outputs=['output'])
     def apply(self, input_):
@@ -246,7 +234,8 @@ class LookUpTrain(Initializable, Feedforward):
         self.window.allocate()
 
     def load(self, filename):
-        params = getParams(self, T.itensor3())
+        params = self.window.getParams()
+        #params_W, params_B = getParams(self, T.itensor3())
         with closing(open(filename, 'rb')) as f:
             params_value = pickle.load(f)
         for p, p_value in zip(params, params_value):
@@ -256,6 +245,7 @@ class LookUpTrain(Initializable, Feedforward):
         return self.window.get_Params()
 
     def save(self, repo=NLP_PATH, filename=NLP):
-        params = getParams(self, T.itensor3())
+        params = self.window.getParams()
+        #params = getParams(self, T.itensor3())
         with closing(open(os.path.join(repo, filename), 'wb')) as f:
             pickle.dump(params, f, protocol=pickle.HIGHEST_PROTOCOL)
