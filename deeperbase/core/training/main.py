@@ -236,7 +236,6 @@ def training(x_train, x_valid, x_test, y_train, y_valid, y_test, dico):
 					t_nlp.save() # rajouter option repo et filename pour enregistrer
 					best_valid = valid_cost
 					print ("saving network...")
-				return
 				""" TEST """
 				"""
 				test_cost=[]

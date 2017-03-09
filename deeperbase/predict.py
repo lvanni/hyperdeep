@@ -43,7 +43,8 @@ if __name__ == '__main__':
     
     # Natural Langage Processing
     t_nlp = LookUpTrain(DWIN, n_mot, VECT_SIZE, N_HIDDEN)
-    
+    t_nlp.initialize()
+				
     # get the last networkstate
     netstate = "network_state"
     for filename in os.listdir(NLP_PATH):
