@@ -240,13 +240,14 @@ class LookUpTrain(Initializable, Feedforward):
         with closing(open(filename, 'rb')) as f:
             params_value = pickle.load(f)
         for p, p_value in zip(params, params_value):
-            p.set_value(p_value.get_value())
+            p.set_value(p_value)
 
     def getParams(self):
         return self.window.getParams()
 
     def save(self, repo=NLP_PATH, filename=NLP):
         params = self.window.getParams()
+	params_value = [p.get_value() for p in params]
         #params = getParams(self, T.itensor3())
         with closing(open(os.path.join(repo, filename), 'wb')) as f:
-            pickle.dump(params, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(params_value, f, protocol=pickle.HIGHEST_PROTOCOL)
