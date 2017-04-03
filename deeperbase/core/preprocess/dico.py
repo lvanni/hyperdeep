@@ -7,7 +7,7 @@ import copy
 import os
 import pickle
 
-from deeperbase.core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO
+from deeperbase.core.config import DICO_PATH, OCC_DICO, EMBEDDING_DICO, LEN_DATA
 
 import numpy as np
 
@@ -39,7 +39,7 @@ def add_padding(line, paddings):
 
 def get_input_from_file(filename, dico, padding=[]):
 	sentences=[]
-	word_sentences=[]
+	#word_sentences=[]
 	with closing(open(filename, 'rb')) as f:
 		line = []
 		rare = [dico[0]['RARE'], dico[1]['RARE'],
@@ -62,7 +62,7 @@ def get_input_from_file(filename, dico, padding=[]):
 					lemme[2][i] = dico[2].get(line[i][2], rare[2])
 					lemme[3][i] = dico[3].get(line[i][3], rare[3])
 				sentences.append(lemme)
-				word_sentences.append(line)
+				#word_sentences.append(line)
 				line = []
 
 	return sentences
@@ -134,11 +134,7 @@ def build_dictionnary(corpus):
 
 
 def build_dico_from_occ(occ_dico):
-	# INIT PARAMETERS
-	# seuil pour la conservation des tokens
-	# len_data = [nb_forme, nb_lemme, nb_code, nb_fonction]
-	len_data = [5, 5, 1, 1]
-	
+
 	index = [0, 0, 0, 0]
 	dico = {}; dico[0]={}; dico[1]={}; dico[2]={}; dico[3]={}
 	
@@ -151,7 +147,7 @@ def build_dico_from_occ(occ_dico):
 
 	for i in range(4):
 		for elem in occ_dico[i]:
-			if occ_dico[i][elem] >= len_data[i] and elem not in dico[i]:
+			if occ_dico[i][elem] >= LEN_DATA[i] and elem not in dico[i]:
 				dico[i][elem] = index[i]
 				index[i] += 1
 
