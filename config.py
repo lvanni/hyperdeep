@@ -21,3 +21,6 @@ max_words = 5000
 # Word2Vec parameters (see train_word2vec)
 min_word_count = 1
 context = 10
+
+# label delimiter
+label_mark = "__"

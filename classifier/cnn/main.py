@@ -2,11 +2,13 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
 
-import models
+from classifier.cnn import models
+from config import label_mark
 import numpy as np
 
-data_src = ["../../data/test/rt-polarity.pos","../../data/test/rt-polarity.neg"] 
-embeddings_src = "../../bin/rt-polarity.vec"
+
+data_src = ["./data/test/rt-polarity.pos","./data/test/rt-polarity.neg"] 
+embeddings_src = "./bin/rt-polarity.vec"
 
 MAX_NB_WORDS = 10000
 MAX_SEQUENCE_LENGTH = 100
@@ -48,13 +50,35 @@ class Params:
 			self.filter_pool_lengths=dct['filter_pool_lengths']
 
 class PreProcessing:
+	
+	def loadData(self, corpus_file):   
 		
-	def loadData(self):   
 		print("loading data...")
+		
+		"""
+		label_dic = {}
+		labels = []
+		texts = []
+		
+		i = 0
+		print("label ids:")
+		for text in open(corpus_file,"r").readlines():
+			label = text.split(label_mark + " ")[0].replace(label_mark, "")
+			text = text.replace(label + " ", "")
+			
+			label_int = label_dic.get(label, i)
+			if label not in label_dic.keys():
+				label_dic[label] = i
+				print(label + " =", i)
+				i += 1
+			labels += [label_int]
+			texts += [text]
+		
+		"""	
 		text_pos = open(data_src[0],"r").readlines()
 		text_neg = open(data_src[1],"r").readlines()
 		labels_pos = [1]*len(text_pos)
-		labels_neg = [0] * len(text_neg)
+		labels_neg = [0]*len(text_neg)
 		texts = text_pos
 		texts.extend(text_neg)
 		labels = labels_pos
@@ -86,7 +110,11 @@ class PreProcessing:
 		self.y_val = labels[-nb_validation_samples:]
 		self.word_index = word_index
 
-	def loadEmbeddings(self):
+	def loadEmbeddings(self, vectors_file):
+		
+		#print(vectors_file)
+		#print(embeddings_src)
+		
 		word_index = self.word_index
 		embeddings_index = {}
 		f = open(embeddings_src)
@@ -113,10 +141,10 @@ class PreProcessing:
 		self.EMBEDDING_DIM = EMBEDDING_DIM
 		self.MAX_SEQUENCE_LENGTH = MAX_SEQUENCE_LENGTH
 
-def main():
+def train(corpus_file, model_file, vectors_file):
 	preprocessing = PreProcessing()
-	preprocessing.loadData()
-	preprocessing.loadEmbeddings()
+	preprocessing.loadData(corpus_file)
+	preprocessing.loadEmbeddings(vectors_file)
 	
 	cnn_model = models.CNNModel()
 	params_obj = Params()
@@ -137,5 +165,3 @@ def main():
 	
 	#evaluate
 
-if __name__ == "__main__":
-	main()

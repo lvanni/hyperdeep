@@ -6,6 +6,7 @@ Created on 16 nov. 2017
 '''
 import sys
 
+from classifier.cnn.main import train
 from skipgram.skipgram_with_NS import create_vectors, get_most_similar
 
 
@@ -14,6 +15,7 @@ def print_help():
     print("The commands supported by deeperbase are:\n")
     print("\tskipgram\ttrain a skipgram model")
     print("\tnn\t\tquery for nearest neighbors\n")
+    print("\ttrain\ttrain a CNN model for sentence classification")
     
 def print_invalidArgs_mess():
     print("Invalid argument detected!\n")
@@ -32,11 +34,13 @@ if __name__ == '__main__':
     # GET COMMAND
     try:
         command = sys.argv[1]
-        if command not in ["skipgram", "nn"]:
+        if command not in ["skipgram", "nn", "train"]:
             raise
     except:
         print_help()
         exit()
+
+    
 
     # EXECT COMMAND
     if command == "skipgram":
@@ -50,6 +54,23 @@ if __name__ == '__main__':
             print("The following arguments are mandatory:\n")
             print("\t-input\ttraining file path")
             print("\t-output\toutput file path\n")
+            print_help()
+            exit()
+            
+    if command == "train":
+        try:
+            args = get_args()
+            corpus_file = args["-input"]
+            model_file = args["-output"]
+            train(corpus_file, model_file, args.get("-w2vec", False))
+        except:
+            raise
+            print_invalidArgs_mess()
+            print("The following arguments are mandatory:\n")
+            print("\t-input\ttraining file path")
+            print("\t-output\toutput file path")
+            print("\t-w2vec\tword vector representations file path\n")
+            print("\t-label\tlabels prefix [__label__]")
             print_help()
             exit()
             
