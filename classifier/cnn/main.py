@@ -55,7 +55,6 @@ class PreProcessing:
 		
 		print("loading data...")
 		
-		"""
 		label_dic = {}
 		labels = []
 		texts = []
@@ -74,7 +73,7 @@ class PreProcessing:
 			labels += [label_int]
 			texts += [text]
 		
-		"""	
+		"""
 		text_pos = open(data_src[0],"r").readlines()
 		text_neg = open(data_src[1],"r").readlines()
 		labels_pos = [1]*len(text_pos)
@@ -83,6 +82,7 @@ class PreProcessing:
 		texts.extend(text_neg)
 		labels = labels_pos
 		labels.extend(labels_neg)
+		"""
 		
 		tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
 		tokenizer.fit_on_texts(texts)
@@ -115,9 +115,13 @@ class PreProcessing:
 		#print(vectors_file)
 		#print(embeddings_src)
 		
+		if not vectors_file:
+			print("ERR: -w2vec argument is still mandatory...")
+			raise
+		
 		word_index = self.word_index
 		embeddings_index = {}
-		f = open(embeddings_src)
+		f = open(vectors_file)
 		i=0
 		for line in f:
 			values = line.split()
