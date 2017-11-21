@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#np.random.seed(13)
 import gensim
 from keras.layers import Embedding, Reshape, Activation, Input
 from keras.layers.merge import Dot
@@ -9,11 +8,9 @@ from keras.models import Model
 from keras.preprocessing.sequence import skipgrams
 from keras.preprocessing.text import Tokenizer
 
+from config import embedding_dim
 import numpy as np
 
-"""
-TRAINING SKIP-GRAM MODEL
-"""
 def create_vectors(corpus_file, vectors_file):
     
     corpus = open(corpus_file).readlines()
@@ -24,14 +21,12 @@ def create_vectors(corpus_file, vectors_file):
     V = len(tokenizer.word_index) + 1
     print("vocabulary_size: ", V)
     
-    dim_embedddings = 128
-    
     w_inputs = Input(shape=(1, ), dtype='int32')
-    w = Embedding(V, dim_embedddings)(w_inputs)
+    w = Embedding(V, embedding_dim)(w_inputs)
     
     # context
     c_inputs = Input(shape=(1, ), dtype='int32')
-    c  = Embedding(V, dim_embedddings)(c_inputs)
+    c  = Embedding(V, embedding_dim)(c_inputs)
     o = Dot(axes=2)([w, c])
     o = Reshape((1,), input_shape=(1, 1))(o)
     o = Activation('sigmoid')(o)
@@ -52,7 +47,7 @@ def create_vectors(corpus_file, vectors_file):
         print(loss)
     
     f = open(vectors_file ,'w')
-    f.write('{} {}\n'.format(V-1, dim_embedddings))
+    f.write('{} {}\n'.format(V-1, embedding_dim))
     vectors = SkipGram.get_weights()[0]
     for word, i in tokenizer.word_index.items():
         f.write('{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :])))))
