@@ -5,6 +5,7 @@ from keras.utils import np_utils
 from classifier.cnn import models
 from config import label_mark
 import numpy as np
+from skipgram.skipgram_with_NS import create_vectors
 
 
 data_src = ["./data/test/rt-polarity.pos","./data/test/rt-polarity.neg"] 
@@ -54,6 +55,8 @@ class PreProcessing:
 	def loadData(self, corpus_file):   
 		
 		print("loading data...")
+		
+		self.corpus_file = corpus_file
 		
 		label_dic = {}
 		labels = []
@@ -114,16 +117,17 @@ class PreProcessing:
 		
 		#print(vectors_file)
 		#print(embeddings_src)
-		
-		if not vectors_file:
-			print("ERR: -w2vec argument is still mandatory...")
-			raise
-		
+
 		word_index = self.word_index
 		embeddings_index = {}
-		f = open(vectors_file)
+		
+		if not vectors_file:
+			vectors = create_vectors(self.corpus_file)
+		else:
+			vectors = open(vectors_file, "r").readlines()
+			
 		i=0
-		for line in f:
+		for line in vectors:
 			values = line.split()
 			word = values[0]
 			coefs = np.asarray(values[1:], dtype='float32')
@@ -132,7 +136,6 @@ class PreProcessing:
 			i+=1
 			if i>10000:
 				break
-		f.close()
 
 		print('Found %s word vectors.' % len(embeddings_index))
 		embedding_matrix = np.zeros((len(word_index) + 1, EMBEDDING_DIM))
@@ -168,4 +171,6 @@ def train(corpus_file, model_file, vectors_file):
 	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size)
 	
 	#evaluate
+	#plot_model(model, to_file='model.png')
+	#SVG(model_to_dot(model).create(prog='dot', format='svg'))
 

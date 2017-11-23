@@ -64,12 +64,13 @@ if __name__ == '__main__':
             model_file = args["-output"]
             train(corpus_file, model_file, args.get("-w2vec", False))
         except:
+            raise
             print_invalidArgs_mess()
             print("The following arguments are mandatory:\n")
             print("\t-input\ttraining file path")
-            print("\t-output\toutput file path")
+            print("\t-output\toutput file path\n")
+            print("The following arguments for training are optional:\n")
             print("\t-w2vec\tword vector representations file path\n")
-            print("\t-label\tlabels prefix [__label__]")
             print_help()
             exit()
             

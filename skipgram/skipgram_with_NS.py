@@ -11,7 +11,7 @@ from keras.preprocessing.text import Tokenizer
 from config import embedding_dim
 import numpy as np
 
-def create_vectors(corpus_file, vectors_file):
+def create_vectors(corpus_file, vectors_file=False):
     
     corpus = open(corpus_file).readlines()
     
@@ -45,14 +45,23 @@ def create_vectors(corpus_file, vectors_file):
                 loss += SkipGram.train_on_batch(x, y)
     
         print(loss)
-    
-    f = open(vectors_file ,'w')
-    f.write('{} {}\n'.format(V-1, embedding_dim))
-    vectors = SkipGram.get_weights()[0]
-    for word, i in tokenizer.word_index.items():
-        f.write('{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :])))))
-    f.close()
 
+    vectors = SkipGram.get_weights()[0]    
+    w2v = []
+    if vectors_file:
+        f = open(vectors_file ,'w')
+        f.write('{} {}\n'.format(V-1, embedding_dim))
+        for word, i in tokenizer.word_index.items():
+            vector = '{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :]))))
+            f.write(vector)
+            w2v += [vector]
+        f.close()
+    else:
+        for word, i in tokenizer.word_index.items():
+            w2v += ['{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :]))))]
+
+    return w2v
+    
 """
 GET W2VEC MODEL
 """
