@@ -5,7 +5,7 @@ Created on 21 nov. 2017
 '''
 # Model Hyperparameters
 embedding_dim = 128
-filter_sizes = (3,4,5)
+filter_sizes = (3,4,5) # Fenetre de cooccurrence
 num_filters = 100
 dropout_prob = (0.5, 0.8)
 hidden_dims = 50

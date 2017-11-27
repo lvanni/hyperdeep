@@ -1,6 +1,8 @@
+from IPython.core.display import SVG
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
+from keras.utils.vis_utils import plot_model, model_to_dot
 
 from classifier.cnn import models
 from config import label_mark
@@ -171,6 +173,6 @@ def train(corpus_file, model_file, vectors_file):
 	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size)
 	
 	#evaluate
-	#plot_model(model, to_file='model.png')
+	plot_model(model, to_file='model.png')
 	#SVG(model_to_dot(model).create(prog='dot', format='svg'))
 
