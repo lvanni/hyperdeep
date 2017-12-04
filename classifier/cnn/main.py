@@ -1,14 +1,12 @@
-from IPython.core.display import SVG
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
-from keras.utils.vis_utils import plot_model, model_to_dot
+from keras.models import load_model
 
 from classifier.cnn import models
 from config import label_mark
 import numpy as np
 from skipgram.skipgram_with_NS import create_vectors
-
 
 data_src = ["./data/test/rt-polarity.pos","./data/test/rt-polarity.neg"] 
 embeddings_src = "./bin/rt-polarity.vec"
@@ -159,7 +157,7 @@ def train(corpus_file, model_file, vectors_file):
 	params_obj = Params()
 	
 	# Establish params
-	params_obj.num_classes=2
+	params_obj.num_classes=len(np.unique(preprocessing.y_train))
 	params_obj.vocab_size = len(preprocessing.word_index)
 	params_obj.inp_length = preprocessing.MAX_SEQUENCE_LENGTH
 	params_obj.embeddings_dim = preprocessing.EMBEDDING_DIM
@@ -171,8 +169,21 @@ def train(corpus_file, model_file, vectors_file):
 	
 	# train
 	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size)
+
+	# save model
+	model.save(model_file)
 	
-	#evaluate
-	plot_model(model, to_file='model.png')
-	#SVG(model_to_dot(model).create(prog='dot', format='svg'))
+def predict(text_file, model_file, vectors_file):
+
+	# load and preprocess text
+	preprocessing = PreProcessing()
+	preprocessing.loadData(text_file)
+	preprocessing.loadEmbeddings(vectors_file)
+	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
+	
+	# load and predict
+	model = load_model(model_file)
+	predictions = model.predict(x_data)
+	print(predictions)
+
 

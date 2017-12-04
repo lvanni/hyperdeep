@@ -6,7 +6,7 @@ Created on 16 nov. 2017
 '''
 import sys
 
-from classifier.cnn.main import train
+from classifier.cnn.main import train, predict
 from skipgram.skipgram_with_NS import create_vectors, get_most_similar
 
 
@@ -15,7 +15,8 @@ def print_help():
     print("The commands supported by deeperbase are:\n")
     print("\tskipgram\ttrain a skipgram model")
     print("\tnn\t\tquery for nearest neighbors\n")
-    print("\ttrain\ttrain a CNN model for sentence classification")
+    print("\ttrain\ttrain a CNN model for sentence classification\n")
+    print("\tpredict\tpredict most likely labels")
     
 def print_invalidArgs_mess():
     print("Invalid argument detected!\n")
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     # GET COMMAND
     try:
         command = sys.argv[1]
-        if command not in ["skipgram", "nn", "train"]:
+        if command not in ["skipgram", "nn", "train", "predict"]:
             raise
     except:
         print_help()
@@ -57,23 +58,6 @@ if __name__ == '__main__':
             print_help()
             exit()
             
-    if command == "train":
-        try:
-            args = get_args()
-            corpus_file = args["-input"]
-            model_file = args["-output"]
-            train(corpus_file, model_file, args.get("-w2vec", False))
-        except:
-            raise
-            print_invalidArgs_mess()
-            print("The following arguments are mandatory:\n")
-            print("\t-input\ttraining file path")
-            print("\t-output\toutput file path\n")
-            print("The following arguments for training are optional:\n")
-            print("\t-w2vec\tword vector representations file path\n")
-            print_help()
-            exit()
-            
     if command == "nn": # nearest neighbors
         try:
             args = get_args()
@@ -90,3 +74,34 @@ if __name__ == '__main__':
             print_help()
             exit()
             
+    if command == "train":
+        try:
+            args = get_args()
+            corpus_file = args["-input"]
+            train(corpus_file, model_file, args.get("-w2vec", False))
+        except:
+            print_invalidArgs_mess()
+            print("The following arguments are mandatory:\n")
+            print("\t-input\ttraining file path")
+            print("\t-output\toutput file path\n")
+            print("The following arguments for training are optional:\n")
+            print("\t-w2vec\tword vector representations file path\n")
+            print_help()
+            exit()
+
+    if command == "predict":
+        try:
+            args = get_args()
+            model_file = args[2]
+            vectors_file = args[3]
+            text_file = args[4]
+            predict(text_file, model_file, vectors_file)
+        except:
+            raise
+            print_invalidArgs_mess()
+            print("usage: hyperdeep predict <model> <vec> <test-data>:\n")
+            print("\t<model>\tmodel filename\n")
+            print("\t<vec>\tword vector representations file path\n")
+            print("\t<test-data>\ttest data filename\n")
+            print_help()
+            exit()
