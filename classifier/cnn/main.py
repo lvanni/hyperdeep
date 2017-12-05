@@ -1,3 +1,6 @@
+import os
+import json
+
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
@@ -63,19 +66,18 @@ class PreProcessing:
 		texts = []
 		
 		i = 0
-		print("label ids:")
-		for text in open(corpus_file,"r").readlines():
+		for text in open(corpus_file, "r").readlines():
 			label = text.split(label_mark + " ")[0].replace(label_mark, "")
 			text = text.replace(label + " ", "")
 			
 			label_int = label_dic.get(label, i)
 			if label not in label_dic.keys():
 				label_dic[label] = i
-				print(label + " =", i)
 				i += 1
 			labels += [label_int]
 			texts += [text]
 		
+
 		"""
 		text_pos = open(data_src[0],"r").readlines()
 		text_neg = open(data_src[1],"r").readlines()
@@ -149,6 +151,7 @@ class PreProcessing:
 		self.MAX_SEQUENCE_LENGTH = MAX_SEQUENCE_LENGTH
 
 def train(corpus_file, model_file, vectors_file):
+
 	preprocessing = PreProcessing()
 	preprocessing.loadData(corpus_file)
 	preprocessing.loadEmbeddings(vectors_file)
@@ -158,7 +161,7 @@ def train(corpus_file, model_file, vectors_file):
 	
 	# Establish params
 	params_obj.num_classes=len(np.unique(preprocessing.y_train))
-	params_obj.vocab_size = len(preprocessing.word_index)
+	params_obj.vocab_size = len(preprocessing.word_index) 
 	params_obj.inp_length = preprocessing.MAX_SEQUENCE_LENGTH
 	params_obj.embeddings_dim = preprocessing.EMBEDDING_DIM
 	
@@ -183,7 +186,23 @@ def predict(text_file, model_file, vectors_file):
 	
 	# load and predict
 	model = load_model(model_file)
+
+	# print(model.layers)
+	# input = model.layers[i].get_output_at(0) => sortie d'un layer
+	# model2 = CONV2D(input)
+	# deconv_layer = CONV2D_TRANSPOSE
+	# model2.add(deconv_layer)
+	# model2.compile
+	# mettre à jour les poids
+
 	predictions = model.predict(x_data)
+
+	# save predictions in a file
+	result_path = "results/" + os.path.basename(text_file) + ".res"
+	results = open(result_path, "w")
+	results.write(json.dumps(predictions.tolist()))
+	results.close()
+
 	print(predictions)
 
 

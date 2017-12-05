@@ -46,9 +46,10 @@ def create_vectors(corpus_file, vectors_file=False):
     
         print(loss)
 
-    vectors = SkipGram.get_weights()[0]    
+    vectors = SkipGram.get_weights()[0]
     w2v = []
-    if vectors_file:
+    if not vectors_file:
+        vectors_file = corpus_file + ".vec"
         f = open(vectors_file ,'w')
         f.write('{} {}\n'.format(V-1, embedding_dim))
         for word, i in tokenizer.word_index.items():
@@ -56,9 +57,6 @@ def create_vectors(corpus_file, vectors_file=False):
             f.write(vector)
             w2v += [vector]
         f.close()
-    else:
-        for word, i in tokenizer.word_index.items():
-            w2v += ['{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :]))))]
 
     return w2v
     

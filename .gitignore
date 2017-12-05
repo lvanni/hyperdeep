@@ -1,9 +1,13 @@
 .settings
 .project
 .pydevproject
+.DS_Store
 
 # DATA
 data/*
+
+# RESULTS
+results/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

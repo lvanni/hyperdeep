@@ -78,6 +78,7 @@ if __name__ == '__main__':
         try:
             args = get_args()
             corpus_file = args["-input"]
+            model_file = args["-output"]
             train(corpus_file, model_file, args.get("-w2vec", False))
         except:
             print_invalidArgs_mess()
@@ -97,11 +98,10 @@ if __name__ == '__main__':
             text_file = args[4]
             predict(text_file, model_file, vectors_file)
         except:
-            raise
             print_invalidArgs_mess()
             print("usage: hyperdeep predict <model> <vec> <test-data>:\n")
-            print("\t<model>\tmodel filename\n")
+            print("\t<model>\tmodel file path\n")
             print("\t<vec>\tword vector representations file path\n")
-            print("\t<test-data>\ttest data filename\n")
+            print("\t<test-data>\ttest data file path\n")
             print_help()
             exit()
