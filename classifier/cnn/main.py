@@ -70,14 +70,16 @@ class PreProcessing:
 			label = text.split(label_mark + " ")[0].replace(label_mark, "")
 			text = text.replace(label + " ", "")
 			
-			label_int = label_dic.get(label, i)
 			if label not in label_dic.keys():
+				print(label)	
 				label_dic[label] = i
 				i += 1
+			label_int = label_dic[label]
 			labels += [label_int]
 			texts += [text]
 		
 
+		#print(labels)
 		"""
 		text_pos = open(data_src[0],"r").readlines()
 		text_neg = open(data_src[1],"r").readlines()
@@ -98,7 +100,8 @@ class PreProcessing:
 
 		data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
 
-		labels = np_utils.to_categorical(np.asarray(labels))
+		#labels = np_utils.to_categorical(np.asarray(labels))
+		labels = np.asarray(labels)
 		print('Shape of data tensor:', data.shape)
 		print('Shape of label tensor:', labels.shape)
 
@@ -160,7 +163,9 @@ def train(corpus_file, model_file, vectors_file):
 	params_obj = Params()
 	
 	# Establish params
+	print(preprocessing.y_train)
 	params_obj.num_classes=len(np.unique(preprocessing.y_train))
+	print("Number of classes : ", params_obj.num_classes)
 	params_obj.vocab_size = len(preprocessing.word_index) 
 	params_obj.inp_length = preprocessing.MAX_SEQUENCE_LENGTH
 	params_obj.embeddings_dim = preprocessing.EMBEDDING_DIM
