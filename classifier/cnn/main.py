@@ -30,7 +30,7 @@ class Params:
 	filter_sizes = [3,4,5]
 	filter_numbers = [100,100,100]
 	filter_pool_lengths = [2,2,2]
-	num_epochs = 2
+	num_epochs = 10
 	batch_size = 50
 	dropout_val = 0.5
 	dense_layer_size = 100
@@ -65,19 +65,16 @@ class PreProcessing:
 		labels = []
 		texts = []
 		
-		i = 0
+		self.num_classes = 0
 		for text in open(corpus_file, "r").readlines():
 			label = text.split(label_mark + " ")[0].replace(label_mark, "")
 			text = text.replace(label + " ", "")
-			
 			if label not in label_dic.keys():
-				print(label)	
-				label_dic[label] = i
-				i += 1
+				label_dic[label] = self.num_classes
+				self.num_classes += 1
 			label_int = label_dic[label]
 			labels += [label_int]
 			texts += [text]
-		
 
 		#print(labels)
 		"""
@@ -100,8 +97,8 @@ class PreProcessing:
 
 		data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
 
-		#labels = np_utils.to_categorical(np.asarray(labels))
-		labels = np.asarray(labels)
+		labels = np_utils.to_categorical(np.asarray(labels))
+		
 		print('Shape of data tensor:', data.shape)
 		print('Shape of label tensor:', labels.shape)
 
@@ -164,7 +161,7 @@ def train(corpus_file, model_file, vectors_file):
 	
 	# Establish params
 	print(preprocessing.y_train)
-	params_obj.num_classes=len(np.unique(preprocessing.y_train))
+	params_obj.num_classes=preprocessing.num_classes
 	print("Number of classes : ", params_obj.num_classes)
 	params_obj.vocab_size = len(preprocessing.word_index) 
 	params_obj.inp_length = preprocessing.MAX_SEQUENCE_LENGTH
