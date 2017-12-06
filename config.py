@@ -3,24 +3,22 @@ Created on 21 nov. 2017
 
 @author: lvanni
 '''
+
 # Model Hyperparameters
-embedding_dim = 128
-filter_sizes = (3,4,5) # Fenetre de cooccurrence
-num_filters = 100
-dropout_prob = (0.5, 0.8)
-hidden_dims = 50
+EMBEDDING_DIM = 128
 
-# Training parameters
-batch_size = 50
-num_epochs = 20
+# Size of the validation dataset (0.1 => 10%)
+VALIDATION_SPLIT = 0.1
 
-# Prepossessing parameters
-sequence_length = 400
-max_words = 5000
+# SIZE OF SENTENCE (NUMBER OF WORDS)
+MAX_SEQUENCE_LENGTH = 20
 
-# Word2Vec parameters (see train_word2vec)
-min_word_count = 1
-context = 10
+DENSE_LAYER_SIZE = 100
+FILTER_POOL_LENGTHS = [2,2,2]
+FILTER_SIZES = [3,4,5]
+DROPOUT_VAL = 0.5
+NUM_EPOCHS = 10
+BACH_SIZE = 50
 
 # label delimiter
-label_mark = "__"
+LABEL_MARK = "__"

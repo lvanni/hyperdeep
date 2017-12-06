@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import gensim
+import numpy as np
+
 from keras.layers import Embedding, Reshape, Activation, Input
 from keras.layers.merge import Dot
 from keras.models import Model
 from keras.preprocessing.sequence import skipgrams
 from keras.preprocessing.text import Tokenizer
 
-from config import embedding_dim
-import numpy as np
+from config import EMBEDDING_DIM
 
 def create_vectors(corpus_file, vectors_file=False):
     
@@ -22,11 +23,11 @@ def create_vectors(corpus_file, vectors_file=False):
     print("vocabulary_size: ", V)
     
     w_inputs = Input(shape=(1, ), dtype='int32')
-    w = Embedding(V, embedding_dim)(w_inputs)
+    w = Embedding(V, EMBEDDING_DIM)(w_inputs)
     
     # context
     c_inputs = Input(shape=(1, ), dtype='int32')
-    c  = Embedding(V, embedding_dim)(c_inputs)
+    c  = Embedding(V, EMBEDDING_DIM)(c_inputs)
     o = Dot(axes=2)([w, c])
     o = Reshape((1,), input_shape=(1, 1))(o)
     o = Activation('sigmoid')(o)
@@ -50,13 +51,13 @@ def create_vectors(corpus_file, vectors_file=False):
     w2v = []
     if not vectors_file:
         vectors_file = corpus_file + ".vec"
-        f = open(vectors_file ,'w')
-        f.write('{} {}\n'.format(V-1, embedding_dim))
-        for word, i in tokenizer.word_index.items():
-            vector = '{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :]))))
-            f.write(vector)
-            w2v += [vector]
-        f.close()
+    f = open(vectors_file ,'w')
+    f.write('{} {}\n'.format(V-1, EMBEDDING_DIM))
+    for word, i in tokenizer.word_index.items():
+        vector = '{} {}\n'.format(word, ' '.join(map(str, list(vectors[i, :]))))
+        f.write(vector)
+        w2v += [vector]
+    f.close()
 
     return w2v
     

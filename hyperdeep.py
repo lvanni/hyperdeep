@@ -9,7 +9,6 @@ import sys
 from classifier.cnn.main import train, predict
 from skipgram.skipgram_with_NS import create_vectors, get_most_similar
 
-
 def print_help():
     print("usage: python hyperdeep.py <command> <args>\n")
     print("The commands supported by deeperbase are:\n")
@@ -51,6 +50,7 @@ if __name__ == '__main__':
             vectors_file = args["-output"]
             create_vectors(corpus_file, vectors_file)
         except:
+            raise
             print_invalidArgs_mess()
             print("The following arguments are mandatory:\n")
             print("\t-input\ttraining file path")

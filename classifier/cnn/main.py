@@ -1,57 +1,30 @@
 import os
 import json
 
+import numpy as np
+
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
 from keras.models import load_model
 
 from classifier.cnn import models
-from config import label_mark
-import numpy as np
 from skipgram.skipgram_with_NS import create_vectors
 
-data_src = ["./data/test/rt-polarity.pos","./data/test/rt-polarity.neg"] 
-embeddings_src = "./bin/rt-polarity.vec"
-
-MAX_NB_WORDS = 10000
-MAX_SEQUENCE_LENGTH = 100
-VALIDATION_SPLIT = 0.1
+from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT
 
 ####################################
 class Params:
-	inp_len = None
-	vocab_size = None
-	num_classes= None
-	
-	use_pretrained_embeddings = True
-	embeddings_dim = 300
-	train_embedding = True
-	filter_sizes = [3,4,5]
-	filter_numbers = [100,100,100]
-	filter_pool_lengths = [2,2,2]
-	num_epochs = 10
-	batch_size = 50
-	dropout_val = 0.5
-	dense_layer_size = 100
-	num_output_classes = 2
-	use_two_channels = True
-	
-	def setParams(self, dct):
-		if 'vocab_size' in dct:
-			self.vocab_size=dct['vocab_size']
-		if 'embeddings_size' in dct:
-			self.embeddings_size=dct['embeddings_size']
-		if 'inp_len' in dct:
-			self.inp_len=dct['inp_len']
-		if 'train_embedding' in dct:
-			self.train_embedding=dct['train_embedding']
-		if 'filter_sizes' in dct:
-			self.filter_sizes=dct['filter_sizes']
-		if 'filter_numbers' in dct:
-			self.filter_numbers=dct['filter_numbers']			
-		if 'filter_pool_lengths' in dct:
-			self.filter_pool_lengths=dct['filter_pool_lengths']
+
+	# Initalize defaut parameters
+	dense_layer_size = DENSE_LAYER_SIZE
+	filter_pool_lengths = FILTER_POOL_LENGTHS
+	filter_sizes = FILTER_SIZES
+	dropout_val = DROPOUT_VAL
+	num_epochs = NUM_EPOCHS
+	batch_size = BACH_SIZE
+	inp_length = MAX_SEQUENCE_LENGTH
+	embeddings_dim = EMBEDDING_DIM
 
 class PreProcessing:
 	
@@ -65,9 +38,10 @@ class PreProcessing:
 		labels = []
 		texts = []
 		
+		# Read text and detect classes/labels
 		self.num_classes = 0
 		for text in open(corpus_file, "r").readlines():
-			label = text.split(label_mark + " ")[0].replace(label_mark, "")
+			label = text.split(LABEL_MARK + " ")[0].replace(LABEL_MARK, "")
 			text = text.replace(label + " ", "")
 			if label not in label_dic.keys():
 				label_dic[label] = self.num_classes
@@ -75,22 +49,12 @@ class PreProcessing:
 			label_int = label_dic[label]
 			labels += [label_int]
 			texts += [text]
-
-		#print(labels)
-		"""
-		text_pos = open(data_src[0],"r").readlines()
-		text_neg = open(data_src[1],"r").readlines()
-		labels_pos = [1]*len(text_pos)
-		labels_neg = [0]*len(text_neg)
-		texts = text_pos
-		texts.extend(text_neg)
-		labels = labels_pos
-		labels.extend(labels_neg)
-		"""
 		
-		tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
+		tokenizer = Tokenizer() # nb_words=MAX_NB_WORDS)
 		tokenizer.fit_on_texts(texts)
 		sequences = tokenizer.texts_to_sequences(texts)
+
+		#print(sequences)
 
 		word_index = tokenizer.word_index
 		print('Found %s unique tokens.' % len(word_index))
@@ -146,33 +110,29 @@ class PreProcessing:
 			if embedding_vector is not None:
 				# words not found in embedding index will be all-zeros.
 				embedding_matrix[i] = embedding_vector
+
 		self.embedding_matrix = embedding_matrix
-		self.EMBEDDING_DIM = EMBEDDING_DIM
-		self.MAX_SEQUENCE_LENGTH = MAX_SEQUENCE_LENGTH
 
 def train(corpus_file, model_file, vectors_file):
 
+	# preprocess data
 	preprocessing = PreProcessing()
 	preprocessing.loadData(corpus_file)
 	preprocessing.loadEmbeddings(vectors_file)
 	
-	cnn_model = models.CNNModel()
-	params_obj = Params()
-	
 	# Establish params
-	print(preprocessing.y_train)
-	params_obj.num_classes=preprocessing.num_classes
-	print("Number of classes : ", params_obj.num_classes)
+	params_obj = Params()
+	params_obj.num_classes = preprocessing.num_classes
 	params_obj.vocab_size = len(preprocessing.word_index) 
-	params_obj.inp_length = preprocessing.MAX_SEQUENCE_LENGTH
-	params_obj.embeddings_dim = preprocessing.EMBEDDING_DIM
-	
-	# get model
+	params_obj.inp_length = MAX_SEQUENCE_LENGTH
+	params_obj.embeddings_dim = EMBEDDING_DIM
+
+	# create and get model
+	cnn_model = models.CNNModel()
 	model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
-	
+		
+	# train model
 	x_train, y_train, x_val, y_val = preprocessing.x_train, preprocessing.y_train, preprocessing.x_val, preprocessing.y_val
-	
-	# train
 	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size)
 
 	# save model
@@ -180,14 +140,15 @@ def train(corpus_file, model_file, vectors_file):
 	
 def predict(text_file, model_file, vectors_file):
 
-	# load and preprocess text
+	# preprocess data
 	preprocessing = PreProcessing()
 	preprocessing.loadData(text_file)
 	preprocessing.loadEmbeddings(vectors_file)
-	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
 	
 	# load and predict
+	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
 	model = load_model(model_file)
+	predictions = model.predict(x_data)
 
 	# print(model.layers)
 	# input = model.layers[i].get_output_at(0) => sortie d'un layer
@@ -196,8 +157,6 @@ def predict(text_file, model_file, vectors_file):
 	# model2.add(deconv_layer)
 	# model2.compile
 	# mettre à jour les poids
-
-	predictions = model.predict(x_data)
 
 	# save predictions in a file
 	result_path = "results/" + os.path.basename(text_file) + ".res"
