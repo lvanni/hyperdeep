@@ -10,14 +10,14 @@ from keras.models import Model
 from keras.preprocessing.sequence import skipgrams
 from keras.preprocessing.text import Tokenizer
 
-from config import EMBEDDING_DIM
+from config import EMBEDDING_DIM, MAX_NB_WORDS, NUM_EPOCHS, NEGATIVE_SAMPLES, WINDOW_SIZE
 
 def create_vectors(corpus_file, vectors_file=False):
     
     corpus = open(corpus_file).readlines()
     
     corpus = [sentence for sentence in corpus if sentence.count(' ') >= 2]
-    tokenizer = Tokenizer()
+    tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
     tokenizer.fit_on_texts(corpus)
     V = len(tokenizer.word_index) + 1
     print("vocabulary_size: ", V)
@@ -36,16 +36,16 @@ def create_vectors(corpus_file, vectors_file=False):
     SkipGram.summary()
     SkipGram.compile(loss='binary_crossentropy', optimizer='adam')
     
-    for _ in range(5):
+    for epoch in range(NUM_EPOCHS):
         loss = 0.
         for i, doc in enumerate(tokenizer.texts_to_sequences(corpus)):
-            data, labels = skipgrams(sequence=doc, vocabulary_size=V, window_size=5, negative_samples=5.)
+            data, labels = skipgrams(sequence=doc, vocabulary_size=V, window_size=WINDOW_SIZE, negative_samples=NEGATIVE_SAMPLES)
             x = [np.array(x) for x in zip(*data)]
             y = np.array(labels, dtype=np.int32)
             if x:
                 loss += SkipGram.train_on_batch(x, y)
     
-        print(loss)
+        print("Loss : ", loss/epoch)
 
     vectors = SkipGram.get_weights()[0]
     w2v = []
@@ -78,6 +78,8 @@ FIND MOST SIMILAR WORD
 """
 def get_most_similar(word, vectors_file):
     w2v = get_w2v(vectors_file)
-    return w2v.most_similar(positive=[word])
+    most_similar = w2v.most_similar(positive=[word])
+    print(most_similar)
+    return most_similar
 
 

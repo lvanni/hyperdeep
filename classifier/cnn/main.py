@@ -11,7 +11,7 @@ from keras.models import load_model
 from classifier.cnn import models
 from skipgram.skipgram_with_NS import create_vectors
 
-from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT
+from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT, MAX_NB_WORDS
 
 ####################################
 class Params:
@@ -50,7 +50,7 @@ class PreProcessing:
 			labels += [label_int]
 			texts += [text]
 		
-		tokenizer = Tokenizer() # nb_words=MAX_NB_WORDS)
+		tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
 		tokenizer.fit_on_texts(texts)
 		sequences = tokenizer.texts_to_sequences(texts)
 
@@ -158,12 +158,8 @@ def predict(text_file, model_file, vectors_file):
 	# model2.compile
 	# mettre à jour les poids
 
-	# save predictions in a file
-	result_path = "results/" + os.path.basename(text_file) + ".res"
-	results = open(result_path, "w")
-	results.write(json.dumps(predictions.tolist()))
-	results.close()
-
 	print(predictions)
+
+	return predictions
 
 

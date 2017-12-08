@@ -5,6 +5,8 @@ Created on 16 nov. 2017
 @author: laurent.vanni@unice.fr
 '''
 import sys
+import os
+import json
 
 from classifier.cnn.main import train, predict
 from skipgram.skipgram_with_NS import create_vectors, get_most_similar
@@ -65,8 +67,15 @@ if __name__ == '__main__':
             model = args[2]
             word = args[3]
             most_similar_list = get_most_similar(word, model)
-            print(most_similar_list)
+
+            # save predictions in a file
+            result_path = "results/" + os.path.basename(model) + ".res"
+            results = open(result_path, "w")
+            results.write(json.dumps(most_similar_list))
+            results.close()
+
         except:
+            raise
             print_invalidArgs_mess()
             print("usage: python hyperdeep.py nn <model> <word>\n")
             print("\tmodel\ttmodel filename")
@@ -97,7 +106,14 @@ if __name__ == '__main__':
             model_file = args[2]
             vectors_file = args[3]
             text_file = args[4]
-            predict(text_file, model_file, vectors_file)
+            predictions = predict(text_file, model_file, vectors_file)
+
+            # save predictions in a file
+            result_path = "results/" + os.path.basename(text_file) + ".res"
+            results = open(result_path, "w")
+            results.write(json.dumps(predictions.tolist()))
+            results.close()
+
         except:
             print_invalidArgs_mess()
             print("usage: hyperdeep predict <model> <vec> <test-data>:\n")
