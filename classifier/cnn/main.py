@@ -1,6 +1,6 @@
 import os
 import json
-
+import random
 import numpy as np
 
 from keras.preprocessing.sequence import pad_sequences
@@ -40,7 +40,10 @@ class PreProcessing:
 		
 		# Read text and detect classes/labels
 		self.num_classes = 0
-		for text in open(corpus_file, "r").readlines():
+		text_array = open(corpus_file, "r").readlines()
+		random.shuffle(text_array)
+
+		for text in text_array:
 			label = text.split(LABEL_MARK + " ")[0].replace(LABEL_MARK, "")
 			text = text.replace(label + " ", "")
 			if label not in label_dic.keys():
