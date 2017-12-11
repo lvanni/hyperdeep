@@ -44,7 +44,7 @@ class CNNModel:
 		"""
 
 		#Convolution
-		conv_layer = Conv1D(filters=100, kernel_size=3, padding='valid', activation='relu', strides=1)
+		conv_layer = Conv1D(filters=200, kernel_size=5, padding='valid', activation='relu', strides=1)
 		model.add(conv_layer)
 
 		# we use max pooling:

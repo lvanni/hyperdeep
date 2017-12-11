@@ -40,10 +40,7 @@ class PreProcessing:
 		
 		# Read text and detect classes/labels
 		self.num_classes = 0
-		text_array = open(corpus_file, "r").readlines()
-		random.shuffle(text_array)
-
-		for text in text_array:
+		for text in open(corpus_file, "r").readlines():
 			label = text.split(LABEL_MARK + " ")[0].replace(LABEL_MARK, "")
 			text = text.replace(label + " ", "")
 			if label not in label_dic.keys():
@@ -53,6 +50,10 @@ class PreProcessing:
 			labels += [label_int]
 			texts += [text]
 		
+		data = list(zip(labels, texts))
+		random.shuffle(data)
+		labels, texts = zip(*data)
+
 		tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
 		tokenizer.fit_on_texts(texts)
 		sequences = tokenizer.texts_to_sequences(texts)
