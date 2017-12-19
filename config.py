@@ -10,7 +10,7 @@ Created on 21 nov. 2017
 MAX_NB_WORDS = None
 
 # ------------- EMBEDDING -------------
-EMBEDDING_DIM = 300
+EMBEDDING_DIM = 128
 
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
 NEGATIVE_SAMPLES = 5.
@@ -23,7 +23,7 @@ WINDOW_SIZE = 5
 VALIDATION_SPLIT = 0.2
 
 # SIZE OF SENTENCE (NUMBER OF WORDS)
-MAX_SEQUENCE_LENGTH = 20
+MAX_SEQUENCE_LENGTH = 50
 
 # 3 filtres:
 # 1) taille 3

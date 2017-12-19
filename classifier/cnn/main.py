@@ -1,5 +1,6 @@
 import os
 import json
+import pickle
 import random
 import numpy as np
 
@@ -7,6 +8,7 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
 from keras.models import load_model
+from keras.callbacks import ModelCheckpoint
 
 from classifier.cnn import models
 from skipgram.skipgram_with_NS import create_vectors
@@ -28,7 +30,40 @@ class Params:
 
 class PreProcessing:
 	
-	def loadData(self, corpus_file):   
+	def tokenize(self, texts, model_file):
+
+		if os.path.isfile(model_file + ".index") :
+			with open(model_file + ".index", 'rb') as handle:
+				word_index = pickle.load(handle)
+		else:
+			word_index = {}
+			word_index["<PAD>"] = 0
+		data = (np.zeros((len(texts), MAX_SEQUENCE_LENGTH))).astype('int32')
+
+		index = 0
+		max_sentence_size = 0
+		i = 0
+		for line in texts:
+			words = line.split()[:MAX_SEQUENCE_LENGTH]
+			sentence_length = len(words)
+			sentence = []
+			for word in words:
+				if word not in word_index.keys():
+					index += 1
+					word_index[word] = index
+				sentence.append(word_index[word])
+			if sentence_length < MAX_SEQUENCE_LENGTH:
+				for j in range(MAX_SEQUENCE_LENGTH - sentence_length):
+					sentence.append(word_index["<PAD>"])
+			
+			data[i] = sentence
+			i += 1
+		with open(model_file + ".index", 'wb') as handle:
+			pickle.dump(word_index, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+		return word_index, data
+
+	def loadData(self, corpus_file, model_file):   
 		
 		print("loading data...")
 		
@@ -42,7 +77,7 @@ class PreProcessing:
 		self.num_classes = 0
 		for text in open(corpus_file, "r").readlines():
 			label = text.split(LABEL_MARK + " ")[0].replace(LABEL_MARK, "")
-			text = text.replace(label + " ", "")
+			text = text.replace(LABEL_MARK + label + LABEL_MARK + " ", "")
 			if label not in label_dic.keys():
 				label_dic[label] = self.num_classes
 				self.num_classes += 1
@@ -53,17 +88,20 @@ class PreProcessing:
 		data = list(zip(labels, texts))
 		random.shuffle(data)
 		labels, texts = zip(*data)
-
+		
+		"""
 		tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
 		tokenizer.fit_on_texts(texts)
 		sequences = tokenizer.texts_to_sequences(texts)
-
-		#print(sequences)
-
-		word_index = tokenizer.word_index
-		print('Found %s unique tokens.' % len(word_index))
-
 		data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
+		word_index = tokenizer.word_index
+		"""
+
+		word_index, data = self.tokenize(texts, model_file)
+
+		print(data)
+
+		print('Found %s unique tokens.' % len(word_index))
 
 		labels = np_utils.to_categorical(np.asarray(labels))
 		
@@ -121,7 +159,7 @@ def train(corpus_file, model_file, vectors_file):
 
 	# preprocess data
 	preprocessing = PreProcessing()
-	preprocessing.loadData(corpus_file)
+	preprocessing.loadData(corpus_file, model_file)
 	preprocessing.loadEmbeddings(vectors_file)
 	
 	# Establish params
@@ -137,16 +175,18 @@ def train(corpus_file, model_file, vectors_file):
 		
 	# train model
 	x_train, y_train, x_val, y_val = preprocessing.x_train, preprocessing.y_train, preprocessing.x_val, preprocessing.y_val
-	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size)
+	checkpoint = ModelCheckpoint(model_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+	callbacks_list = [checkpoint]
+	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size, callbacks=callbacks_list)
 
 	# save model
-	model.save(model_file)
+	#model.save(model_file)
 	
 def predict(text_file, model_file, vectors_file):
 
 	# preprocess data
 	preprocessing = PreProcessing()
-	preprocessing.loadData(text_file)
+	preprocessing.loadData(text_file, model_file)
 	preprocessing.loadEmbeddings(vectors_file)
 	
 	# load and predict
@@ -160,7 +200,7 @@ def predict(text_file, model_file, vectors_file):
 	# deconv_layer = CONV2D_TRANSPOSE
 	# model2.add(deconv_layer)
 	# model2.compile
-	# mettre à jour les poids
+	# mettre a jour les poids
 
 	print(predictions)
 
