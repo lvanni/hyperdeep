@@ -9,9 +9,10 @@ from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
 from keras.models import load_model
 from keras.callbacks import ModelCheckpoint
+from keras.layers import Conv2D
 
 from classifier.cnn import models
-from skipgram.skipgram_with_NS import create_vectors
+from skipgram.skipgram_with_NS import create_vectors, get_w2v
 
 from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT, MAX_NB_WORDS
 
@@ -99,8 +100,6 @@ class PreProcessing:
 
 		word_index, data = self.tokenize(texts, model_file)
 
-		print(data)
-
 		print('Found %s unique tokens.' % len(word_index))
 
 		labels = np_utils.to_categorical(np.asarray(labels))
@@ -114,6 +113,8 @@ class PreProcessing:
 		data = data[indices]
 		labels = labels[indices]
 		nb_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+		
+		print(data)
 
 		self.x_train = data[:-nb_validation_samples]
 		self.y_train = labels[:-nb_validation_samples]
@@ -171,7 +172,7 @@ def train(corpus_file, model_file, vectors_file):
 
 	# create and get model
 	cnn_model = models.CNNModel()
-	model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
+	model, deconv_model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
 		
 	# train model
 	x_train, y_train, x_val, y_val = preprocessing.x_train, preprocessing.y_train, preprocessing.x_val, preprocessing.y_val
@@ -179,8 +180,15 @@ def train(corpus_file, model_file, vectors_file):
 	callbacks_list = [checkpoint]
 	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size, callbacks=callbacks_list)
 
-	# save model
-	#model.save(model_file)
+	# save deconv model
+	i = 0
+	for layer in model.layers:	
+		weights = layer.get_weights()
+		deconv_model.layers[i].set_weights(weights)
+		i += 1
+		if type(layer) is Conv2D:
+			break
+	deconv_model.save("bin/deconv_model.test")
 	
 def predict(text_file, model_file, vectors_file):
 
@@ -192,18 +200,70 @@ def predict(text_file, model_file, vectors_file):
 	# load and predict
 	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
 	model = load_model(model_file)
+	deconv_model = load_model("bin/deconv_model.test")
 	predictions = model.predict(x_data)
+	
+	
+	sentence = ""
+	sentence_array = []
+	mydict = preprocessing.word_index
+	for index in x_data[0]:
+		try:
+			value = list(mydict.keys())[list(mydict.values()).index(index)]
+		except:
+			value = "PAD"
+		sentence += value + " "
+		sentence_array.append(value)
+	print(sentence)
 
-	# print(model.layers)
+	print("----------------------------")
+	print("DECONVOLUTION")
+	print("----------------------------")
+	
+	deconv = deconv_model.predict(x_data)
+	print(deconv.shape)
+	# nb_sentence, nb_word, embedding_dim, nb_filterss
+	sentence_vector = []
+	for i in range(50):
+		"""
+		value = 0.0
+		for j in range(512):
+			value += deconv[0][0][i][j]
+		word_vector.append(value)
+		"""
+		word_vector = []
+		for j in range(128):
+			value = 0.0
+			for k in range(512):
+				value += deconv[0][i][j][k]
+			word_vector.append(value)
+			
+			#word_vector.append(deconv[0][i][j][1])
+		sentence_vector.append(word_vector)
+	
+	w2v = get_w2v(vectors_file)
+	sentence = {}
+	i = 0
+	for word_vector in sentence_vector:
+		sentence[sum(word_vector)] = sentence_array[i]
+		i += 1
+		"""
+		word_vector = np.array(word_vector, dtype="float32")
+		most_similar = w2v.most_similar(positive=[word_vector], topn=10)
+		sentence += most_similar[0][0] + " "
+		"""
+	print(sorted(sentence.items(), key=lambda x: x[0], reverse=True))
+
+	print("----------------------------")
 	# input = model.layers[i].get_output_at(0) => sortie d'un layer
 	# model2 = CONV2D(input)
 	# deconv_layer = CONV2D_TRANSPOSE
 	# model2.add(deconv_layer)
 	# model2.compile
-	# mettre a jour les poids
+		# mettre a jour les poids
 
-	print(predictions)
-
+	print(predictions)	
+	
 	return predictions
 
 

@@ -115,6 +115,7 @@ if __name__ == '__main__':
             results.close()
 
         except:
+            raise
             print_invalidArgs_mess()
             print("usage: hyperdeep predict <model> <vec> <test-data>:\n")
             print("\t<model>\tmodel file path\n")
