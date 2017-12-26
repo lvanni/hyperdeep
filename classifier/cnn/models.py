@@ -1,82 +1,56 @@
 import numpy as np
 
-from keras import optimizers
+from keras.optimizers import Adam
 from keras.models import Sequential,Model
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers import Input
 from keras.utils import np_utils
-from keras.layers import Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, GlobalMaxPooling1D,  Embedding
+from keras.layers import Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, GlobalMaxPooling1D,  Embedding, Reshape
 from keras.layers import Input, Embedding, LSTM, Dense, merge
 from keras.legacy.layers import Merge
 
-from config import EMBEDDING_DIM
+from config import EMBEDDING_DIM, NB_FILTERS, FILTER_SIZES, DROPOUT_VAL
 
 class CNNModel:
 	
 	def getModel(self, params_obj, weight=None):
 		
-		#print("Use Two channels - static and non-static")
-		inp = Input(shape=(params_obj.inp_length,), dtype='int32')
-
-		# Model	
-		model = Sequential()
-
-		embeddings_layer = Embedding(
+		inputs = Input(shape=(params_obj.inp_length,), dtype='int32')
+		#embedding = Embedding(output_dim=params_obj.embeddings_dim, input_dim=params_obj.vocab_size, input_length=params_obj.inp_length)(inputs)
+		
+		embedding = Embedding(
 			params_obj.vocab_size+1, # due to mask_zero
 			params_obj.embeddings_dim,
 			input_length=params_obj.inp_length,
 			weights=[weight],
 			trainable=False
-		)(inp)
-		#model.add(embeddings_layer)
-		#model.add(Dropout(params_obj.dropout_val))
+		)(inputs)
 		
-		embeddings_layer_t = Embedding(
-			params_obj.vocab_size+1, # due to mask_zero
-			params_obj.embeddings_dim,
-			input_length=params_obj.inp_length,
-			weights=[weight],
-			trainable=True
-		)(inp)
-		
-		""""
-		#Convolution
-		conv_layer = Conv1D(filters=200, kernel_size=5, padding='valid', activation='relu', strides=1)
-		model.add(conv_layer)
+		reshape = Reshape((params_obj.inp_length,params_obj.embeddings_dim,1))(embedding)
 
-		# we use max pooling:
-		model.add(GlobalMaxPooling1D())
-		"""
+		conv_0 = Conv2D(NB_FILTERS, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)
+		conv_1 = Conv2D(NB_FILTERS, FILTER_SIZES[1], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)
+		conv_2 = Conv2D(NB_FILTERS, FILTER_SIZES[2], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)
 
-		convolution_features_list = []
-		for filter_size,pool_length,num_filters in zip(params_obj.filter_sizes, params_obj.filter_pool_lengths, params_obj.filter_sizes):
-			#conv_layer = Conv2D(filters=100, kernel_size=(filter_size, EMBEDDING_DIM), activation='relu')(embeddings_layer)
-			conv_layer = Conv1D(filters=250, kernel_size=filter_size, activation='relu')(embeddings_layer)
-			#pool_layer = MaxPooling2D(pool_size=(pool_length, EMBEDDING_DIM))(conv_layer)
-			pool_layer = MaxPooling1D(pool_size=pool_length)(conv_layer)
-			flatten = Flatten()(pool_layer)
-			convolution_features_list.append(flatten)
+		maxpool_0 = MaxPooling2D(pool_size=(params_obj.inp_length - FILTER_SIZES[0] + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv_0)
+		maxpool_1 = MaxPooling2D(pool_size=(params_obj.inp_length - FILTER_SIZES[1] + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv_1)
+		maxpool_2 = MaxPooling2D(pool_size=(params_obj.inp_length - FILTER_SIZES[2] + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv_2)
 
-		for filter_size,pool_length,num_filters in zip(params_obj.filter_sizes, params_obj.filter_pool_lengths, params_obj.filter_sizes):
-			conv_layer = Conv1D(filters=num_filters, kernel_size=filter_size, activation='relu')(embeddings_layer_t)
-			pool_layer = MaxPooling1D(pool_size=pool_length)(conv_layer)
-			flatten = Flatten()(pool_layer)
-			convolution_features_list.append(flatten)
+		merged_tensor = merge([maxpool_0, maxpool_1, maxpool_2], mode='concat', concat_axis=1)
+		flatten = Flatten()(merged_tensor)
+		# reshape = Reshape((3*num_filters,))(merged_tensor)
+		dropout = Dropout(DROPOUT_VAL)(flatten)
+		#hidden_dense = Dense(params_obj.dense_layer_size,kernel_initializer='uniform',activation='relu')(dropout)
+		output = Dense(params_obj.num_classes, activation='softmax')(dropout)
 
-		out1 = Merge(mode='concat')(convolution_features_list)
-		network = Model(input=inp, output=out1)
-		model.add(network)
+		# this creates a model that includes
+		model = Model(input=inputs, output=output)
 
-		#Add dense layer to complete the model
-		model.add(Dense(params_obj.dense_layer_size,kernel_initializer='uniform',activation='relu'))
-		model.add(Dropout(params_obj.dropout_val))
-		model.add(Dense(params_obj.num_classes, kernel_initializer='uniform', activation='softmax')  )
+		adam = Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+		model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
 
-		adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
-		model.compile(loss='categorical_crossentropy', optimizer=adadelta, metrics=['accuracy'])	
-		
 		return model
 	
 		
