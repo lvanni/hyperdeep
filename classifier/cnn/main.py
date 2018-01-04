@@ -14,7 +14,7 @@ from keras.layers import Conv2D
 from classifier.cnn import models
 from skipgram.skipgram_with_NS import create_vectors, get_w2v
 
-from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT, MAX_NB_WORDS
+from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT, MAX_NB_WORDS, NB_FILTERS
 
 ####################################
 class Params:
@@ -31,40 +31,49 @@ class Params:
 
 class PreProcessing:
 	
-	def tokenize(self, texts, model_file):
+	def tokenize(self, texts, model_file, create_dictionnary):
 
-		if os.path.isfile(model_file + ".index") :
-			with open(model_file + ".index", 'rb') as handle:
-				word_index = pickle.load(handle)
+		if create_dictionnary:
+			my_dictionary = {}
+			my_dictionary["word_index"] = {}
+			my_dictionary["index_word"] = {}
+			my_dictionary["word_index"]["<PAD>"] = 0
+			my_dictionary["index_word"][0] = "<PAD>"
+			index = 0
 		else:
-			word_index = {}
-			word_index["<PAD>"] = 0
-		data = (np.zeros((len(texts), MAX_SEQUENCE_LENGTH))).astype('int32')
+			with open(model_file + ".index", 'rb') as handle:
+				my_dictionary = pickle.load(handle)
 
-		index = 0
-		max_sentence_size = 0
+		data = (np.zeros((len(texts), MAX_SEQUENCE_LENGTH))).astype('int32')
+		
 		i = 0
 		for line in texts:
 			words = line.split()[:MAX_SEQUENCE_LENGTH]
 			sentence_length = len(words)
 			sentence = []
 			for word in words:
-				if word not in word_index.keys():
-					index += 1
-					word_index[word] = index
-				sentence.append(word_index[word])
+				if word not in my_dictionary["word_index"].keys():
+					if create_dictionnary:
+						index += 1
+						my_dictionary["word_index"][word] = index
+						my_dictionary["index_word"][index] = word
+					else:
+						my_dictionary["word_index"][word] = my_dictionary["word_index"]["<PAD>"]
+				sentence.append(my_dictionary["word_index"][word])
 			if sentence_length < MAX_SEQUENCE_LENGTH:
 				for j in range(MAX_SEQUENCE_LENGTH - sentence_length):
-					sentence.append(word_index["<PAD>"])
+					sentence.append(my_dictionary["word_index"]["<PAD>"])
 			
 			data[i] = sentence
 			i += 1
-		with open(model_file + ".index", 'wb') as handle:
-			pickle.dump(word_index, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-		return word_index, data
+		if create_dictionnary:
+			with open(model_file + ".index", 'wb') as handle:
+				pickle.dump(my_dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-	def loadData(self, corpus_file, model_file):   
+		return my_dictionary, data
+
+	def loadData(self, corpus_file, model_file, create_dictionnary):   
 		
 		print("loading data...")
 		
@@ -95,12 +104,12 @@ class PreProcessing:
 		tokenizer.fit_on_texts(texts)
 		sequences = tokenizer.texts_to_sequences(texts)
 		data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-		word_index = tokenizer.word_index
+		my_dictionary = tokenizer.my_dictionary
 		"""
 
-		word_index, data = self.tokenize(texts, model_file)
+		my_dictionary, data = self.tokenize(texts, model_file, create_dictionnary)
 
-		print('Found %s unique tokens.' % len(word_index))
+		print('Found %s unique tokens.' % len(my_dictionary["word_index"]))
 
 		labels = np_utils.to_categorical(np.asarray(labels))
 		
@@ -120,14 +129,14 @@ class PreProcessing:
 		self.y_train = labels[:-nb_validation_samples]
 		self.x_val = data[-nb_validation_samples:]
 		self.y_val = labels[-nb_validation_samples:]
-		self.word_index = word_index
+		self.my_dictionary = my_dictionary
 
 	def loadEmbeddings(self, vectors_file):
 		
 		#print(vectors_file)
 		#print(embeddings_src)
 
-		word_index = self.word_index
+		my_dictionary = self.my_dictionary["word_index"]
 		embeddings_index = {}
 		
 		if not vectors_file:
@@ -147,8 +156,8 @@ class PreProcessing:
 				break
 
 		print('Found %s word vectors.' % len(embeddings_index))
-		embedding_matrix = np.zeros((len(word_index) + 1, EMBEDDING_DIM))
-		for word, i in word_index.items():
+		embedding_matrix = np.zeros((len(my_dictionary) + 1, EMBEDDING_DIM))
+		for word, i in my_dictionary.items():
 			embedding_vector = embeddings_index.get(word)
 			if embedding_vector is not None:
 				# words not found in embedding index will be all-zeros.
@@ -160,13 +169,13 @@ def train(corpus_file, model_file, vectors_file):
 
 	# preprocess data
 	preprocessing = PreProcessing()
-	preprocessing.loadData(corpus_file, model_file)
+	preprocessing.loadData(corpus_file, model_file, create_dictionnary = True)
 	preprocessing.loadEmbeddings(vectors_file)
 	
 	# Establish params
 	params_obj = Params()
 	params_obj.num_classes = preprocessing.num_classes
-	params_obj.vocab_size = len(preprocessing.word_index) 
+	params_obj.vocab_size = len(preprocessing.my_dictionary["word_index"]) 
 	params_obj.inp_length = MAX_SEQUENCE_LENGTH
 	params_obj.embeddings_dim = EMBEDDING_DIM
 
@@ -192,78 +201,50 @@ def train(corpus_file, model_file, vectors_file):
 	
 def predict(text_file, model_file, vectors_file):
 
+	result = []
+
 	# preprocess data
 	preprocessing = PreProcessing()
-	preprocessing.loadData(text_file, model_file)
+	preprocessing.loadData(text_file, model_file, create_dictionnary = False)
 	preprocessing.loadEmbeddings(vectors_file)
 	
 	# load and predict
 	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
 	model = load_model(model_file)
-	deconv_model = load_model("bin/deconv_model.test")
 	predictions = model.predict(x_data)
-	
-	
-	sentence = ""
-	sentence_array = []
-	mydict = preprocessing.word_index
-	for index in x_data[0]:
-		try:
-			value = list(mydict.keys())[list(mydict.values()).index(index)]
-		except:
-			value = "PAD"
-		sentence += value + " "
-		sentence_array.append(value)
-	print(sentence)
+	print(predictions)	
 
 	print("----------------------------")
 	print("DECONVOLUTION")
 	print("----------------------------")
-	
+
+	deconv_model = load_model("bin/deconv_model.test")
 	deconv = deconv_model.predict(x_data)
-	print(deconv.shape)
-	# nb_sentence, nb_word, embedding_dim, nb_filterss
-	sentence_vector = []
-	for i in range(50):
-		"""
-		value = 0.0
-		for j in range(512):
-			value += deconv[0][0][i][j]
-		word_vector.append(value)
-		"""
-		word_vector = []
-		for j in range(128):
-			value = 0.0
-			for k in range(512):
-				value += deconv[0][i][j][k]
-			word_vector.append(value)
-			
-			#word_vector.append(deconv[0][i][j][1])
-		sentence_vector.append(word_vector)
-	
+	print("DECONVOLUTION SHAPE : ", deconv.shape)
+
+	my_dictionary = preprocessing.my_dictionary
 	w2v = get_w2v(vectors_file)
-	sentence = {}
-	i = 0
-	for word_vector in sentence_vector:
-		sentence[sum(word_vector)] = sentence_array[i]
-		i += 1
-		"""
-		word_vector = np.array(word_vector, dtype="float32")
-		most_similar = w2v.most_similar(positive=[word_vector], topn=10)
-		sentence += most_similar[0][0] + " "
-		"""
-	print(sorted(sentence.items(), key=lambda x: x[0], reverse=True))
+
+	for sentence_nb in range(len(x_data)):
+		sentence = {}
+		sentence["sentence"] = ""
+		sentence["prediction"] = predictions[sentence_nb].tolist()
+		for i in range(len(x_data[sentence_nb])):
+			word = ""
+			index = x_data[sentence_nb][i]
+			try:
+				word = my_dictionary["index_word"][index]
+			except:
+				word = "PAD"
+
+			# READ DECONVOLUTION 
+			deconv_value = float(np.sum(deconv[sentence_nb][i]))
+			sentence["sentence"] += word + ":" + str(deconv_value) + " "
+		result.append(sentence)
 
 	print("----------------------------")
-	# input = model.layers[i].get_output_at(0) => sortie d'un layer
-	# model2 = CONV2D(input)
-	# deconv_layer = CONV2D_TRANSPOSE
-	# model2.add(deconv_layer)
-	# model2.compile
-		# mettre a jour les poids
-
-	print(predictions)	
 	
-	return predictions
+
+	return result
 
 

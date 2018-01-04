@@ -42,8 +42,6 @@ if __name__ == '__main__':
         print_help()
         exit()
 
-    
-
     # EXECT COMMAND
     if command == "skipgram":
         try:
@@ -111,7 +109,7 @@ if __name__ == '__main__':
             # save predictions in a file
             result_path = "results/" + os.path.basename(text_file) + ".res"
             results = open(result_path, "w")
-            results.write(json.dumps(predictions.tolist()))
+            results.write(json.dumps(predictions))
             results.close()
 
         except:
