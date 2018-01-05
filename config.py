@@ -31,16 +31,16 @@ NB_FILTERS = 512
 # 1) taille 3
 # 2) taille 4
 # 3) taille 5
-FILTER_SIZES = [3,3,3]
+FILTER_SIZES = [3,2,5]
 
 # 3 filtres de taille 2 a chaque fois pour le maxpooling
-FILTER_POOL_LENGTHS = [3,3,3]
+#FILTER_POOL_LENGTHS = [3,3,3]
 
 DROPOUT_VAL = 0.2
 
 DENSE_LAYER_SIZE = 300
 
-NUM_EPOCHS = 5
+NUM_EPOCHS = 100
 BACH_SIZE = 50
 
 # label delimiter

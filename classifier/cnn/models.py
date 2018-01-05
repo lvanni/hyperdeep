@@ -55,7 +55,7 @@ class CNNModel:
 		model = Model(input=inputs, output=output)
 
 		adam = Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-		model.compile(optimizer=adam, loss='binary_crossentropy', metrics=['accuracy'])
+		model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
 
 		return model, deconv_model
 	

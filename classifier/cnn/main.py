@@ -14,14 +14,13 @@ from keras.layers import Conv2D
 from classifier.cnn import models
 from skipgram.skipgram_with_NS import create_vectors, get_w2v
 
-from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_POOL_LENGTHS, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT, MAX_NB_WORDS, NB_FILTERS
+from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT, MAX_NB_WORDS, NB_FILTERS
 
 ####################################
 class Params:
 
 	# Initalize defaut parameters
 	dense_layer_size = DENSE_LAYER_SIZE
-	filter_pool_lengths = FILTER_POOL_LENGTHS
 	filter_sizes = FILTER_SIZES
 	dropout_val = DROPOUT_VAL
 	num_epochs = NUM_EPOCHS
@@ -223,7 +222,7 @@ def predict(text_file, model_file, vectors_file):
 	print("DECONVOLUTION SHAPE : ", deconv.shape)
 
 	my_dictionary = preprocessing.my_dictionary
-	w2v = get_w2v(vectors_file)
+	#w2v = get_w2v(vectors_file)
 
 	for sentence_nb in range(len(x_data)):
 		sentence = {}
