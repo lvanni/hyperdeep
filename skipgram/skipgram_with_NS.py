@@ -33,8 +33,9 @@ def create_vectors(corpus_file, vectors_file):
     for word in model.wv.index2word:
         f.write(word + " " + " ".join(str(x) for x in model.wv[word]) + "\n")
     f.close()
-				
-    return 0
+
+    print("word2vec done.")
+
     
 """
 GET W2VEC MODEL

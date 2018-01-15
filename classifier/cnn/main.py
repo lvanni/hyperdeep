@@ -66,8 +66,6 @@ class PreProcessing:
 		data = data[indices]
 		labels = labels[indices]
 		nb_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
-		
-		print(data)
 
 		self.x_train = data[:-nb_validation_samples]
 		self.y_train = labels[:-nb_validation_samples]
@@ -84,8 +82,9 @@ class PreProcessing:
 		embeddings_index = {}
 		
 		if not vectors_file:
-			create_vectors(self.corpus_file, model_file + ".vec")
-			
+			vectors_file = self.corpus_file, model_file + ".vec"
+			create_vectors(vectors_file)
+		
 		vectors = open(vectors_file, "r").readlines()
 			
 		i=0
@@ -141,7 +140,7 @@ def train(corpus_file, model_file, vectors_file):
 		i += 1
 		if type(layer) is Conv2D:
 			break
-	deconv_model.save("bin/deconv_model.test")
+	deconv_model.save(model_file + ".deconv")
 	
 def predict(text_file, model_file, vectors_file):
 
@@ -162,7 +161,7 @@ def predict(text_file, model_file, vectors_file):
 	print("DECONVOLUTION")
 	print("----------------------------")
 
-	deconv_model = load_model("bin/deconv_model.test")
+	deconv_model = load_model(model_file + ".deconv")
 	deconv = deconv_model.predict(x_data)
 	print("DECONVOLUTION SHAPE : ", deconv.shape)
 
