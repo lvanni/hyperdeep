@@ -82,8 +82,8 @@ class PreProcessing:
 		embeddings_index = {}
 		
 		if not vectors_file:
-			vectors_file = self.corpus_file, model_file + ".vec"
-			create_vectors(vectors_file)
+			vectors_file = model_file + ".vec"
+			create_vectors(self.corpus_file, vectors_file)
 		
 		vectors = open(vectors_file, "r").readlines()
 			
