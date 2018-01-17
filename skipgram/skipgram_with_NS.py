@@ -29,12 +29,19 @@ def create_vectors(corpus_file, vectors_file):
     model = gensim.models.Word2Vec(sentences, size=EMBEDDING_DIM, window=WINDOW_SIZE, min_count=5, workers=8, sg=1)
 
     f = open(vectors_file ,'w')
-    f.write('{} {}\n'.format(len(model.wv.index2word), EMBEDDING_DIM))    
+    vectors = []
+    vector = '{} {}\n'.format(len(model.wv.index2word), EMBEDDING_DIM)
+    vectors.append(vector)
+    f.write(vector)    
     for word in model.wv.index2word:
-        f.write(word + " " + " ".join(str(x) for x in model.wv[word]) + "\n")
+        vector = word + " " + " ".join(str(x) for x in model.wv[word]) + "\n"
+        vectors.append(vector)
+        f.write(vector)
     f.close()
 
     print("word2vec done.")
+
+    return vectors
 
     
 """

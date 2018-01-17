@@ -15,7 +15,7 @@ EMBEDDING_DIM = 128
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
 NEGATIVE_SAMPLES = 5.
 
-# Window size for finding colocation (cooccurrence calcul)
+# Window size for finding collocation (cooccurrence calcul)
 WINDOW_SIZE = 5
 
 # ------------- CNN -------------
@@ -40,7 +40,7 @@ DROPOUT_VAL = 0.2
 
 DENSE_LAYER_SIZE = 300
 
-NUM_EPOCHS = 1000
+NUM_EPOCHS = 10
 BACH_SIZE = 50
 
 # label delimiter
