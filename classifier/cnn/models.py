@@ -30,21 +30,23 @@ class CNNModel:
 		
 		reshape = Reshape((params_obj.inp_length,params_obj.embeddings_dim,1))(embedding)
 
-		conv_0 = Conv2D(NB_FILTERS, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)
-		#conv_1 = Conv2D(NB_FILTERS, FILTER_SIZES[1], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)
-		#conv_2 = Conv2D(NB_FILTERS, FILTER_SIZES[2], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)
-		
-		# DECONVOLUTION
-		deconv_0 = Conv2DTranspose(NB_FILTERS, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_0)
-		deconv_model = Model(input=inputs, output=deconv_0)
+		# CONVOLUTION
+		conv_array = []
+		maxpool_array = []
+		for filter in FILTER_SIZES:
+			conv = Conv2D(NB_FILTERS, filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
+			maxpool = MaxPooling2D(pool_size=(params_obj.inp_length - filter + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv)
+			conv_array.append(conv)
+			maxpool_array.append(maxpool)			
+						
+		deconv = Conv2DTranspose(NB_FILTERS, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
+		deconv_model = Model(input=inputs, output=deconv)
 
-		maxpool_0 = MaxPooling2D(pool_size=(params_obj.inp_length - FILTER_SIZES[0] + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv_0)
-		#maxpool_1 = MaxPooling2D(pool_size=(params_obj.inp_length - FILTER_SIZES[1] + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv_1)
-		#maxpool_2 = MaxPooling2D(pool_size=(params_obj.inp_length - FILTER_SIZES[2] + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv_2)
-
-		#merged_tensor = merge([maxpool_0, maxpool_1, maxpool_2], mode='concat', concat_axis=1)
-		
-		flatten = Flatten()(maxpool_0)
+		if len(FILTER_SIZES) >= 2:
+			merged_tensor = merge(maxpool_array, mode='concat', concat_axis=1)
+			flatten = Flatten()(merged_tensor)
+		else:
+			flatten = Flatten()(maxpool_array[0])
 		
 		dropout = Dropout(DROPOUT_VAL)(flatten)
 		

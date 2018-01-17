@@ -10,13 +10,13 @@ Created on 21 nov. 2017
 MAX_NB_WORDS = None
 
 # ------------- EMBEDDING -------------
-EMBEDDING_DIM = 128
+EMBEDDING_DIM = 300
 
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
 NEGATIVE_SAMPLES = 5.
 
 # Window size for finding collocation (cooccurrence calcul)
-WINDOW_SIZE = 5
+WINDOW_SIZE = 10
 
 # ------------- CNN -------------
 # Size of the validation dataset (0.1 => 10%)
@@ -31,7 +31,7 @@ NB_FILTERS = 512
 # 1) taille 3
 # 2) taille 4
 # 3) taille 5
-FILTER_SIZES = [3,2,5]
+FILTER_SIZES = [3]
 
 # 3 filtres de taille 2 a chaque fois pour le maxpooling
 #FILTER_POOL_LENGTHS = [3,3,3]
@@ -40,7 +40,7 @@ DROPOUT_VAL = 0.2
 
 DENSE_LAYER_SIZE = 300
 
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 BACH_SIZE = 50
 
 # label delimiter
