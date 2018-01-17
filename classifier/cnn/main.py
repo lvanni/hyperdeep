@@ -37,7 +37,8 @@ class PreProcessing:
 		
 		# Read text and detect classes/labels
 		self.num_classes = 0
-		for text in open(corpus_file, "r").readlines():
+		f = open(corpus_file, "r")
+		for text in f.readlines():
 			label = text.split(LABEL_MARK + " ")[0].replace(LABEL_MARK, "")
 			text = text.replace(LABEL_MARK + label + LABEL_MARK + " ", "")
 			if label not in label_dic.keys():
@@ -46,10 +47,11 @@ class PreProcessing:
 			label_int = label_dic[label]
 			labels += [label_int]
 			texts += [text]
+		f.close()
 		
-		data = list(zip(labels, texts))
-		random.shuffle(data)
-		labels, texts = zip(*data)
+		#data = list(zip(labels, texts))
+		#random.shuffle(data)
+		#labels, texts = zip(*data)
 
 		my_dictionary, data = tokenize(texts, model_file, create_dictionnary)
 
@@ -84,7 +86,9 @@ class PreProcessing:
 		if not vectors_file:
 			vectors = create_vectors(self.corpus_file, model_file + ".vec")
 		else:
-			vectors = open(vectors_file, "r").readlines()
+			f = open(vectors_file, "r")
+			vectors = f.readlines()
+			f.close()
 			
 		i=0
 		for line in vectors:

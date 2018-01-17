@@ -14,11 +14,13 @@ from data_helpers import tokenize
 
 def create_vectors(corpus_file, vectors_file):
     
-    texts = open(corpus_file, "r").readlines()
+    f = open(corpus_file, "r")
+    texts = f.readlines()
     sentences = []
     for line in texts:
         sentences += line.split()
-    my_dictionary, data = tokenize(texts, vectors_file.replace(".vec", ""), True)   				
+    my_dictionary, data = tokenize(texts, vectors_file.replace(".vec", ""), True)
+    f.close()				
 				
     V = len(my_dictionary["word_index"]) + 1
     print("vocabulary_size: ", V)
