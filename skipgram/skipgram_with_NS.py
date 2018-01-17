@@ -13,17 +13,6 @@ from config import EMBEDDING_DIM, NUM_EPOCHS, NEGATIVE_SAMPLES, WINDOW_SIZE
 from data_helpers import tokenize
 
 def create_vectors(corpus_file, vectors_file):
-    
-    f = open(corpus_file, "r")
-    texts = f.readlines()
-    sentences = []
-    for line in texts:
-        sentences += line.split()
-    my_dictionary, data = tokenize(texts, vectors_file.replace(".vec", ""), True)
-    f.close()				
-				
-    V = len(my_dictionary["word_index"]) + 1
-    print("vocabulary_size: ", V)
 
     # GENSIM METHOD    				
     sentences = gensim.models.word2vec.LineSentence(corpus_file)
@@ -39,6 +28,7 @@ def create_vectors(corpus_file, vectors_file):
         vector = word + " " + " ".join(str(x) for x in model.wv[word]) + "\n"
         vectors.append(vector)
         f.write(vector)
+    f.flush()
     f.close()
 
     print("word2vec done.")
