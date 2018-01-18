@@ -20,7 +20,7 @@ WINDOW_SIZE = 10
 
 # ------------- CNN -------------
 # Size of the validation dataset (0.1 => 10%)
-VALIDATION_SPLIT = 0.2
+VALIDATION_SPLIT = 0.1
 
 # SIZE OF SENTENCE (NUMBER OF WORDS)
 MAX_SEQUENCE_LENGTH = 50
@@ -36,12 +36,12 @@ FILTER_SIZES = [3]
 # 3 filtres de taille 2 a chaque fois pour le maxpooling
 #FILTER_POOL_LENGTHS = [3,3,3]
 
-DROPOUT_VAL = 0.2
+DROPOUT_VAL = 0.3
 
-DENSE_LAYER_SIZE = 300
+DENSE_LAYER_SIZE = 180
 
-NUM_EPOCHS = 20
-BACH_SIZE = 50
+NUM_EPOCHS = 1000
+BACH_SIZE = 800
 
 # label delimiter
 LABEL_MARK = "__"

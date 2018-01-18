@@ -1,6 +1,6 @@
 import numpy as np
 
-from keras.optimizers import Adam
+from keras import optimizers
 from keras.models import Sequential,Model
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -56,8 +56,9 @@ class CNNModel:
 		# this creates a model that includes
 		model = Model(input=inputs, output=output)
 
-		adam = Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-		model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
+		#op = optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+		op = optimizers.Adam(lr=1e-3)
+		model.compile(optimizer=op, loss='categorical_crossentropy', metrics=['accuracy'])
 
 		return model, deconv_model
 	
