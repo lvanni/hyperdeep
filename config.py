@@ -10,7 +10,7 @@ Created on 21 nov. 2017
 MAX_NB_WORDS = None
 
 # ------------- EMBEDDING -------------
-EMBEDDING_DIM = 300
+EMBEDDING_DIM = 128
 
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
 NEGATIVE_SAMPLES = 5.
@@ -36,12 +36,12 @@ FILTER_SIZES = [3]
 # 3 filtres de taille 2 a chaque fois pour le maxpooling
 #FILTER_POOL_LENGTHS = [3,3,3]
 
-DROPOUT_VAL = 0.3
+DROPOUT_VAL = 0.2
 
-DENSE_LAYER_SIZE = 180
+DENSE_LAYER_SIZE = 100
 
-NUM_EPOCHS = 1000
-BACH_SIZE = 800
+NUM_EPOCHS = 200
+BACH_SIZE = 64
 
 # label delimiter
 LABEL_MARK = "__"
