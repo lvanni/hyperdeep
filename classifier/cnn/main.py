@@ -164,7 +164,23 @@ def predict(text_file, model_file, vectors_file):
 	print("DECONVOLUTION")
 	print("----------------------------")
 
-	deconv_model = load_model(model_file + ".deconv")
+	deconv_model = load_model(model_file + ".deconv")	
+	
+	for layer in deconv_model.layers:	
+		if type(layer) is Conv2D:
+			weights = layer.get_weights()
+			print(weights[0].shape)
+			weights=weights[0].transpose((0,1,3,2))
+			deconv_weights=np.concatenate([weights[None]]*512, axis=0)
+			deconv_weights = deconv_weights[:,:,:,:,0]
+			deconv_weights = deconv_weights.transpose((1,2,3,0))
+			print(deconv_weights.shape)
+	print(deconv_model.layers[-1].get_weights()[0].shape)
+	deconv_bias = deconv_model.layers[-1].get_weights()[1]
+	deconv_model.layers[-1].set_weights([deconv_weights, deconv_bias])
+
+	#deconv_model.save(model_file + ".deconv")
+	
 	deconv = deconv_model.predict(x_data)
 	print("DECONVOLUTION SHAPE : ", deconv.shape)
 
