@@ -73,7 +73,6 @@ if __name__ == '__main__':
             results.close()
 
         except:
-            raise
             print_invalidArgs_mess()
             print("usage: python hyperdeep.py nn <model> <word>\n")
             print("\tmodel\ttmodel filename")
@@ -88,7 +87,6 @@ if __name__ == '__main__':
             model_file = args["-output"]
             train(corpus_file, model_file, args.get("-w2vec", False))
         except:
-            raise
             print_invalidArgs_mess()
             print("The following arguments are mandatory:\n")
             print("\t-input\ttraining file path")
@@ -113,7 +111,6 @@ if __name__ == '__main__':
             results.close()
 
         except:
-            raise
             print_invalidArgs_mess()
             print("usage: hyperdeep predict <model> <vec> <test-data>:\n")
             print("\t<model>\tmodel file path\n")

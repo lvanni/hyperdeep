@@ -39,7 +39,7 @@ class CNNModel:
 			conv_array.append(conv)
 			maxpool_array.append(maxpool)			
 						
-		deconv = Conv2DTranspose(NB_FILTERS, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
+		deconv = Conv2DTranspose(1, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
 		deconv_model = Model(input=inputs, output=deconv)
 
 		if len(FILTER_SIZES) >= 2:
