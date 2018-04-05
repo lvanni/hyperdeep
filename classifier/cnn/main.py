@@ -187,6 +187,9 @@ def predict(text_file, model_file, vectors_file):
 	my_dictionary = preprocessing.my_dictionary
 	#w2v = get_w2v(vectors_file)
 
+	print(len(x_data))
+	return
+
 	for sentence_nb in range(len(x_data)):
 		sentence = {}
 		sentence["sentence"] = ""
