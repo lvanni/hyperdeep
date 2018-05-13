@@ -10,7 +10,7 @@ Created on 21 nov. 2017
 MAX_NB_WORDS = None
 
 # ------------- EMBEDDING -------------
-EMBEDDING_DIM = 128
+EMBEDDING_DIM = 30
 
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
 NEGATIVE_SAMPLES = 5.

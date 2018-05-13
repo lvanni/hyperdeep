@@ -7,7 +7,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.layers import Conv2D
 
 from classifier.cnn import models
-from skipgram.skipgram_with_NS import create_vectors
+from skipgram.skipgram_with_NS import create_vectors, create_tg_vectors
 
 from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT
 from data_helpers import tokenize
@@ -49,6 +49,9 @@ class PreProcessing:
 			texts += [text]
 		f.close()
 		
+		print("DETECTED LABELS :")
+		print(label_dic)
+
 		#data = list(zip(labels, texts))
 		#random.shuffle(data)
 		#labels, texts = zip(*data)
@@ -75,16 +78,19 @@ class PreProcessing:
 		self.y_val = labels[-nb_validation_samples:]
 		self.my_dictionary = my_dictionary
 
-	def loadEmbeddings(self, vectors_file, model_file):
+	def loadEmbeddings(self, vectors_file, model_file, isTagged):
 		
 		#print(vectors_file)
 		#print(embeddings_src)
 
 		my_dictionary = self.my_dictionary["word_index"]
 		embeddings_index = {}
-		
+
 		if not vectors_file:
-			vectors = create_vectors(self.corpus_file, model_file + ".vec")
+			if isTagged:
+				vectors = create_tg_vectors(self.corpus_file, model_file + ".vec")
+			else:
+				vectors = create_vectors(self.corpus_file, model_file + ".vec")
 		else:
 			f = open(vectors_file, "r")
 			vectors = f.readlines()
@@ -111,12 +117,12 @@ class PreProcessing:
 
 		self.embedding_matrix = embedding_matrix
 
-def train(corpus_file, model_file, vectors_file):
+def train(corpus_file, model_file, vectors_file, isTagged):
 
 	# preprocess data
 	preprocessing = PreProcessing()
 	preprocessing.loadData(corpus_file, model_file, create_dictionnary = True)
-	preprocessing.loadEmbeddings(vectors_file, model_file)
+	preprocessing.loadEmbeddings(vectors_file, model_file, isTagged)
 	
 	# Establish params
 	params_obj = Params()
