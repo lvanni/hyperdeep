@@ -34,8 +34,6 @@ def create_vectors(corpus_file, vectors_file):
 
     print("word2vec done.")
 
-    print(vectors)
-
     return vectors
 
 def create_tg_vectors(corpus_file, vectors_file):
@@ -51,7 +49,7 @@ def create_tg_vectors(corpus_file, vectors_file):
         for word in line.split():
             if "__" in word : continue
             try:
-                args = word.split("::")
+                args = word.split("**")
                 forme.write(args[0] + " ")
                 code.write(args[1] + " ")
                 lemme.write(args[2] + " ")
@@ -80,11 +78,11 @@ def create_tg_vectors(corpus_file, vectors_file):
     for line in corpus:
         for word in line.split():
             if "__" in word or vectors.get(word, False): continue
-            args = word.split("::")
+            args = word.split("**")
             if len(args) < 3:
                 for i in range(3-len(args)):
-                    word += "::PAD"
-            args = word.split("::")
+                    word += "**PAD"
+            args = word.split("**")
             v = word + " "
             i = 0
             for arg in args:
@@ -97,7 +95,6 @@ def create_tg_vectors(corpus_file, vectors_file):
             vectors[word] = v
 
     voc_size = len(vectors.keys())
-    print(vectors.keys())
     vectors = list(vectors.values())
 
     # VECTOR HEADER
@@ -111,7 +108,6 @@ def create_tg_vectors(corpus_file, vectors_file):
     f.close()
 
     print("word2vec done.")
-    print(vectors)
 
     return vectors
     

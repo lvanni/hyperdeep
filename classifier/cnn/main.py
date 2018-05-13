@@ -78,7 +78,7 @@ class PreProcessing:
 		self.y_val = labels[-nb_validation_samples:]
 		self.my_dictionary = my_dictionary
 
-	def loadEmbeddings(self, vectors_file, model_file, isTagged):
+	def loadEmbeddings(self, vectors_file, model_file, isTagged = False):
 		
 		#print(vectors_file)
 		#print(embeddings_src)
@@ -209,8 +209,22 @@ def predict(text_file, model_file, vectors_file):
 				word = "PAD"
 
 			# READ DECONVOLUTION 
-			deconv_value = float(np.sum(deconv[sentence_nb][i]))
-			sentence["sentence"] += word + ":" + str(deconv_value) + " "
+			deconv_value = deconv[sentence_nb][i]
+			if "**" in word:
+				j = int(EMBEDDING_DIM/3)
+
+				#print(deconv_value, j)
+				#print("\t", float(np.sum(deconv_value[:j])))
+				#print("\t", float(np.sum(deconv_value[j:j+j])))
+				#print("\t", float(np.sum(deconv_value[-j:])))
+
+				word_args = word.split("**")
+				word = word_args[0] + "*" + str(float(np.sum(deconv_value[:j])))
+				word += "**" + word_args[1] + "*" + str(float(np.sum(deconv_value[j:j+j])))
+				word += "**" + word_args[2] + "*" + str(float(np.sum(deconv_value[-j:])))
+			else:
+				word =  word + "*" + str(float(np.sum(deconv_value)))
+			sentence["sentence"] += word + " "
 		result.append(sentence)
 
 	print("----------------------------")
