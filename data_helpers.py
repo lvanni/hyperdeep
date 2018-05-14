@@ -25,6 +25,7 @@ def tokenize(texts, model_file, create_dictionnary):
 		sentence = []
 		for word in words:
 			if word not in my_dictionary["word_index"].keys():
+				#print(word,  list(my_dictionary["word_index"].keys())[:20])
 				if create_dictionnary:
 					index += 1
 					my_dictionary["word_index"][word] = index

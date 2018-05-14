@@ -34,12 +34,12 @@ class CNNModel:
 		conv_array = []
 		maxpool_array = []
 		for filter in FILTER_SIZES:
-			conv = Conv2D(NB_FILTERS, filter, int(EMBEDDING_DIM/3), border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
+			conv = Conv2D(NB_FILTERS, filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
 			maxpool = MaxPooling2D(pool_size=(params_obj.inp_length - filter + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv)
 			conv_array.append(conv)
 			maxpool_array.append(maxpool)			
 						
-		deconv = Conv2DTranspose(1, FILTER_SIZES[0], int(EMBEDDING_DIM/3), border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
+		deconv = Conv2DTranspose(1, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
 		deconv_model = Model(input=inputs, output=deconv)
 
 		if len(FILTER_SIZES) >= 2:

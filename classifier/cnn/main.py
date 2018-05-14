@@ -194,7 +194,8 @@ def predict(text_file, model_file, vectors_file):
 	my_dictionary = preprocessing.my_dictionary
 	#w2v = get_w2v(vectors_file)
 
-	print(len(x_data))
+	#print(len(x_data))
+	#print(x_data)
 
 	for sentence_nb in range(len(x_data)):
 		sentence = {}
@@ -204,6 +205,7 @@ def predict(text_file, model_file, vectors_file):
 			word = ""
 			index = x_data[sentence_nb][i]
 			try:
+				print(index)
 				word = my_dictionary["index_word"][index]
 			except:
 				word = "PAD"

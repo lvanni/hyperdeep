@@ -10,7 +10,7 @@ Created on 21 nov. 2017
 MAX_NB_WORDS = None
 
 # ------------- EMBEDDING -------------
-EMBEDDING_DIM = 6
+EMBEDDING_DIM = 120
 
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
 NEGATIVE_SAMPLES = 5.
@@ -40,8 +40,8 @@ DROPOUT_VAL = 0.2
 
 DENSE_LAYER_SIZE = 100
 
-NUM_EPOCHS = 100
-BACH_SIZE = 32
+NUM_EPOCHS = 20
+BACH_SIZE = 64
 
 # label delimiter
 LABEL_MARK = "__"
