@@ -78,21 +78,32 @@ def create_tg_vectors(corpus_file, vectors_file):
     for line in corpus:
         for word in line.split():
             if "__" in word or vectors.get(word, False): continue
-            args = word.split("**")
-            if len(args) < 3:
-                for i in range(3-len(args)):
-                    word += "**PAD"
-            args = word.split("**")
+            if word == "PAD":    
+                vectors[word] = "PAD " + "0 " * EMBEDDING_DIM + "\n"
+                continue
+            
+            # make vectors representation
+            args = word.split("**")            
             v = word + " "
             i = 0
             for arg in args:
                 try:
                     v += vectors_tg[i][arg] + " "
                 except:
-                    v += "0 " * int(EMBEDDING_DIM/3)
+                    v += "0 " * int(EMBEDDING_DIM/3) + " "
                 i += 1
             v += "\n"
             vectors[word] = v
+            
+            # TODO ajouter les representaiton partielle : 
+            #      FROME**PAD**PAD
+            #      PAD**CODE**PAD
+            #      PAD**PAD**LEMME
+            #vectors[args[0]] = args[0] + " " + vectors_tg[0][args[0]] + " " + "0 " * int((EMBEDDING_DIM/3)*2) + "\n"            
+            #vectors[args[1]] = args[1] + " " + "0 " * int(EMBEDDING_DIM/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(EMBEDDING_DIM/3) + "\n"            
+            #vectors[args[2]] = args[2] + " " + "0 " * int((EMBEDDING_DIM/3)*2) + vectors_tg[2][args[2]] + " " + "\n"
+            
+            
 
     voc_size = len(vectors.keys())
     vectors = list(vectors.values())

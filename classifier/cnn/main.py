@@ -50,7 +50,7 @@ class PreProcessing:
 		f.close()
 		
 		print("DETECTED LABELS :")
-		print(label_dic)
+		#print(label_dic)
 
 		#data = list(zip(labels, texts))
 		#random.shuffle(data)
@@ -205,7 +205,6 @@ def predict(text_file, model_file, vectors_file):
 			word = ""
 			index = x_data[sentence_nb][i]
 			try:
-				print(index)
 				word = my_dictionary["index_word"][index]
 			except:
 				word = "PAD"

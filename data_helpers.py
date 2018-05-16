@@ -30,8 +30,24 @@ def tokenize(texts, model_file, create_dictionnary):
 					index += 1
 					my_dictionary["word_index"][word] = index
 					my_dictionary["index_word"][index] = word
-				else:
+					"""
+					if "**" in word:
+						args = word.split("**")
+						for arg in args:
+							if arg not in my_dictionary["word_index"].keys():
+								index += 1
+								my_dictionary["word_index"][arg] = index
+								my_dictionary["index_word"][index] = arg
+					"""
+				else:        
 					my_dictionary["word_index"][word] = my_dictionary["word_index"]["<PAD>"]
+					"""     
+					if "**" in word:
+						args = word.split("**")
+						for arg in args:        
+							if arg in my_dictionary["word_index"].keys():
+								my_dictionary["word_index"][word] = my_dictionary["word_index"][arg]
+					"""        
 			sentence.append(my_dictionary["word_index"][word])
 		if sentence_length < MAX_SEQUENCE_LENGTH:
 			for j in range(MAX_SEQUENCE_LENGTH - sentence_length):
