@@ -34,13 +34,14 @@ class CNNModel:
 		conv_array = []
 		maxpool_array = []
 		for filter in FILTER_SIZES:
-			conv = Conv2D(NB_FILTERS, filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
-			maxpool = MaxPooling2D(pool_size=(params_obj.inp_length - filter + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv)
+			conv = Conv2D(filters=NB_FILTERS, kernel_size=(filter, EMBEDDING_DIM), strides=(1, EMBEDDING_DIM), padding='valid', kernel_initializer='normal', activation='relu')(reshape)	
+
+			maxpool = MaxPooling2D(pool_size=(params_obj.inp_length - filter + 1, 1), padding='valid')(conv)
 			conv_array.append(conv)
 			maxpool_array.append(maxpool)			
 						
-		deconv = Conv2DTranspose(1, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
-		deconv_model = Model(input=inputs, output=deconv)
+		deconv = Conv2DTranspose(filters=1, kernel_size=(FILTER_SIZES[0], EMBEDDING_DIM), padding='valid', kernel_initializer='normal', activation='relu')(conv_array[0])
+		deconv_model = Model(inputs=[inputs], outputs=[deconv])
 
 		if len(FILTER_SIZES) >= 2:
 			merged_tensor = merge(maxpool_array, mode='concat', concat_axis=1)
@@ -54,10 +55,10 @@ class CNNModel:
 		output = Dense(params_obj.num_classes, activation='softmax')(hidden_dense)
 
 		# this creates a model that includes
-		model = Model(input=inputs, output=output)
+		model = Model(inputs=[inputs], outputs=[output])
 
-		#op = optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-		op = optimizers.Adam(lr=1e-3)
+		op = optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+		#op = optimizers.Adam(lr=1e-3)
 		model.compile(optimizer=op, loss='categorical_crossentropy', metrics=['accuracy'])
 
 		return model, deconv_model

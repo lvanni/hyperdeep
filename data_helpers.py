@@ -9,8 +9,8 @@ def tokenize(texts, model_file, create_dictionnary):
 		my_dictionary = {}
 		my_dictionary["word_index"] = {}
 		my_dictionary["index_word"] = {}
-		my_dictionary["word_index"]["<PAD>"] = 0
-		my_dictionary["index_word"][0] = "<PAD>"
+		my_dictionary["word_index"]["PAD"] = 0
+		my_dictionary["index_word"][0] = "PAD"
 		index = 0
 	else:
 		with open(model_file + ".index", 'rb') as handle:
@@ -30,7 +30,9 @@ def tokenize(texts, model_file, create_dictionnary):
 					index += 1
 					my_dictionary["word_index"][word] = index
 					my_dictionary["index_word"][index] = word
-					"""
+					
+					# FOR UNKNOWN WORDS     
+					"""     
 					if "**" in word:
 						args = word.split("**")
 						for arg in args:
@@ -38,20 +40,22 @@ def tokenize(texts, model_file, create_dictionnary):
 								index += 1
 								my_dictionary["word_index"][arg] = index
 								my_dictionary["index_word"][index] = arg
-					"""
+					"""					
 				else:        
-					my_dictionary["word_index"][word] = my_dictionary["word_index"]["<PAD>"]
+					my_dictionary["word_index"][word] = my_dictionary["word_index"]["PAD"]
+					# FOR UNKNOWN WORDS   
 					"""     
 					if "**" in word:
 						args = word.split("**")
 						for arg in args:        
 							if arg in my_dictionary["word_index"].keys():
 								my_dictionary["word_index"][word] = my_dictionary["word_index"][arg]
-					"""        
+					"""
+					
 			sentence.append(my_dictionary["word_index"][word])
 		if sentence_length < MAX_SEQUENCE_LENGTH:
 			for j in range(MAX_SEQUENCE_LENGTH - sentence_length):
-				sentence.append(my_dictionary["word_index"]["<PAD>"])
+				sentence.append(my_dictionary["word_index"]["PAD"])
 		
 		data[i] = sentence
 		i += 1

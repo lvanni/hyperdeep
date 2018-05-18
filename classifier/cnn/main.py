@@ -134,7 +134,7 @@ def train(corpus_file, model_file, vectors_file, isTagged):
 	# create and get model
 	cnn_model = models.CNNModel()
 	model, deconv_model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
-		
+	#print(model.layers[3].get_weights()[0].shape)
 	# train model
 	x_train, y_train, x_val, y_val = preprocessing.x_train, preprocessing.y_train, preprocessing.x_val, preprocessing.y_val
 	checkpoint = ModelCheckpoint(model_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
