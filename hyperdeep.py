@@ -50,7 +50,6 @@ if __name__ == '__main__':
             vectors_file = args["-output"]
             create_vectors(corpus_file, vectors_file)
         except:
-            raise
             print_invalidArgs_mess()
             print("The following arguments are mandatory:\n")
             print("\t-input\ttraining file path")
