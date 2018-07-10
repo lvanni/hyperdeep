@@ -17,7 +17,7 @@ def create_vectors(corpus_file, vectors_file):
     # GENSIM METHOD    				
     sentences = gensim.models.word2vec.LineSentence(corpus_file)
     # sg defines the training algorithm. By default (sg=0), CBOW is used. Otherwise (sg=1), skip-gram is employed.
-    model = gensim.models.Word2Vec(sentences, size=EMBEDDING_DIM, window=WINDOW_SIZE, min_count=5, workers=8, sg=1)
+    model = gensim.models.Word2Vec(sentences, size=EMBEDDING_DIM, window=WINDOW_SIZE, min_count=0, workers=8, sg=1)
 
     f = open(vectors_file ,'w')
     vectors = []
