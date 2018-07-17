@@ -30,4 +30,4 @@ Then you can make predictions on new text. There is an example in bin/Campagne20
 	$ python hyperdeep.py predict bin/Campagne2017 bin/Campagne2017.vec data/Campagne2017.test
 
 # Observe the deconvolution
-The predict command line will create a result file in the folder result/ (create the folder if needed). This file is a json format file where you can find the activation score given by the deconvolution for each word. An example of results is given in result/Campagne2017.test.res
+The predict command line will create a result file in the folder result/ (create the folder if needed). This file is a json format file where you can find the activation score given by the deconvolution for each word. An example of results is given in result/Campagne2017.test.	res
