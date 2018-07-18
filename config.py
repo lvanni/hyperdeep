@@ -40,7 +40,7 @@ DROPOUT_VAL = 0.2
 
 DENSE_LAYER_SIZE = 300
 
-NUM_EPOCHS = 100
+NUM_EPOCHS = 3
 BACH_SIZE = 64
 
 # label delimiter

@@ -133,8 +133,8 @@ def train(corpus_file, model_file, vectors_file, isTagged):
 
 	# create and get model
 	cnn_model = models.CNNModel()
-	model, deconv_model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
-	#print(model.layers[3].get_weights()[0].shape)
+	model, deconv_model, attention_model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
+
 	# train model
 	x_train, y_train, x_val, y_val = preprocessing.x_train, preprocessing.y_train, preprocessing.x_val, preprocessing.y_val
 	checkpoint = ModelCheckpoint(model_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
@@ -150,6 +150,9 @@ def train(corpus_file, model_file, vectors_file, isTagged):
 		if type(layer) is Conv2D:
 			break
 	deconv_model.save(model_file + ".deconv")
+
+	# save attention model
+	attention_model.save(model_file + ".attention")
 	
 def predict(text_file, model_file, vectors_file):
 
@@ -164,39 +167,42 @@ def predict(text_file, model_file, vectors_file):
 	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
 	model = load_model(model_file)
 	predictions = model.predict(x_data)
+	
 	print(predictions)	
 
 	print("----------------------------")
 	print("DECONVOLUTION")
 	print("----------------------------")
 
+	# load deconv_model
 	deconv_model = load_model(model_file + ".deconv")	
 	
+	# update weights (TODO: should be after the train)
 	for layer in deconv_model.layers:	
 		if type(layer) is Conv2D:
 			deconv_weights = layer.get_weights()[0]
-			#weights = layer.get_weights()
-			#print(weights[0].shape)
-			#weights=weights[0].transpose((0,1,3,2))
-			#deconv_weights=np.concatenate([weights[None]]*512, axis=0)
-			#deconv_weights = deconv_weights[:,:,:,:,0]
-			#deconv_weights = deconv_weights.transpose((1,2,3,0))
-			print(deconv_weights.shape)
-	print(deconv_model.layers[-1].get_weights()[0].shape)
 	deconv_bias = deconv_model.layers[-1].get_weights()[1]
 	deconv_model.layers[-1].set_weights([deconv_weights, deconv_bias])
-
-	#deconv_model.save(model_file + ".deconv")
 	
+	# apply deconvolution
 	deconv = deconv_model.predict(x_data)
-	print("DECONVOLUTION SHAPE : ", deconv.shape)
+	print("deconvolution", 	deconv.shape)
 
+	print("----------------------------")
+	print("ATTENTION")
+	print("----------------------------")
+
+	# load deconv_model
+	attention_model = load_model(model_file + ".attention")	
+
+	# apply deconvolution
+	attentions = attention_model.predict(x_data)
+
+	print("attentions", attentions.shape)	
+	#print(attentions)
+
+	# Format result (prediction + deconvolution)
 	my_dictionary = preprocessing.my_dictionary
-	#w2v = get_w2v(vectors_file)
-
-	#print(len(x_data))
-	#print(x_data)
-
 	for sentence_nb in range(len(x_data)):
 		sentence = {}
 		sentence["sentence"] = ""
@@ -211,25 +217,29 @@ def predict(text_file, model_file, vectors_file):
 
 			# READ DECONVOLUTION 
 			deconv_value = deconv[sentence_nb][i]
+			
+			if i == 0 or i == len(x_data[sentence_nb])-1: # because shape (?,48,1)
+				attention_value = 0
+			else:
+				attention_value = attentions[sentence_nb][i-1]
 			if "**" in word:
 				j = int(EMBEDDING_DIM/3)
-
-				#print(deconv_value, j)
-				#print("\t", float(np.sum(deconv_value[:j])))
-				#print("\t", float(np.sum(deconv_value[j:j+j])))
-				#print("\t", float(np.sum(deconv_value[-j:])))
-
 				word_args = word.split("**")
+				# deconvolution word
 				word = word_args[0] + "*" + str(float(np.sum(deconv_value[:j])))
+				# deconvolution code
 				word += "**" + word_args[1] + "*" + str(float(np.sum(deconv_value[j:j+j])))
+				# deconvolution lemme
 				word += "**" + word_args[2] + "*" + str(float(np.sum(deconv_value[-j:])))
+				# attention
+				word += "*" + str(float(attention_value))
 			else:
-				word =  word + "*" + str(float(np.sum(deconv_value)))
+				# deconvolution
+				word = word + "*" + str(float(np.sum(deconv_value)))
+				# attention
+				word += "*" + str(float(attention_value))
 			sentence["sentence"] += word + " "
 		result.append(sentence)
-
-	print("----------------------------")
-	
 
 	return result
 
