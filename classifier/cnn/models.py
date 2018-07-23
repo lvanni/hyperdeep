@@ -100,6 +100,8 @@ class CNNModel:
 		# ----------
 		# LSTM LAYER
 		# ----------
+		# Select input as "reshape" to use CONVOLUTION
+		# Select input as "embedding" to drop CONVOLUTION
 		lstm = LSTM(100, return_sequences=True)(reshape) #(embedding) <=== Select here with or without convolution
 		print("lstm :", lstm.shape)
 
@@ -136,7 +138,9 @@ class CNNModel:
 		# -------------
 		# DROPOUT LAYER
 		# -------------
-		dropout = Dropout(DROPOUT_VAL)(maxpool) #(sent_representation) <=== Select here with or without lstm
+		# Select input as "sent_representation" to use LSTM
+		# Select input as "maxpool" to drop LSTM
+		dropout = Dropout(DROPOUT_VAL)(sent_representation)
 		print("Dropout :", dropout.shape)
 
 		# -----------------
