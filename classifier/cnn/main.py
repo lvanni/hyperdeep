@@ -142,13 +142,16 @@ def train(corpus_file, model_file, vectors_file, isTagged):
 	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size, callbacks=callbacks_list)
 
 	# save deconv model
-	i = 0
-	for layer in model.layers:	
-		weights = layer.get_weights()
-		deconv_model.layers[i].set_weights(weights)
-		i += 1
-		if type(layer) is Conv2D:
-			break
+	try:
+		i = 0
+		for layer in model.layers:	
+			weights = layer.get_weights()
+			deconv_model.layers[i].set_weights(weights)
+			i += 1
+			if type(layer) is Conv2D:
+				break
+	except:
+		print("WARNING: not convolution in this model!")
 	deconv_model.save(model_file + ".deconv")
 
 	# save attention model
