@@ -9,9 +9,10 @@ from keras.layers import Conv2D
 from classifier.cnn import models
 from skipgram.skipgram_with_NS import create_vectors, create_tg_vectors
 
-from config import LABEL_MARK, DENSE_LAYER_SIZE, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT
+#from config import DENSE_LAYER_SIZE, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT
 from data_helpers import tokenize
 
+"""
 class Params:
 
 	# Initalize defaut parameters
@@ -22,10 +23,11 @@ class Params:
 	batch_size = BACH_SIZE
 	inp_length = MAX_SEQUENCE_LENGTH
 	embeddings_dim = EMBEDDING_DIM
+"""
 
 class PreProcessing:
 
-	def loadData(self, corpus_file, model_file, create_dictionnary):   
+	def loadData(self, corpus_file, model_file, config, create_dictionnary):   
 		
 		print("loading data...")
 		
@@ -39,8 +41,8 @@ class PreProcessing:
 		self.num_classes = 0
 		f = open(corpus_file, "r")
 		for text in f.readlines():
-			label = text.split(LABEL_MARK + " ")[0].replace(LABEL_MARK, "")
-			text = text.replace(LABEL_MARK + label + LABEL_MARK + " ", "")
+			label = text.split("__ ")[0].replace("__", "")
+			text = text.replace("__" + label + "__ ", "")
 			if label not in label_dic.keys():
 				label_dic[label] = self.num_classes
 				self.num_classes += 1
@@ -70,7 +72,7 @@ class PreProcessing:
 		np.random.shuffle(indices)
 		data = data[indices]
 		labels = labels[indices]
-		nb_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+		nb_validation_samples = int(config["VALIDATION_SPLIT"] * data.shape[0])
 
 		self.x_train = data[:-nb_validation_samples]
 		self.y_train = labels[:-nb_validation_samples]
@@ -78,23 +80,18 @@ class PreProcessing:
 		self.y_val = labels[-nb_validation_samples:]
 		self.my_dictionary = my_dictionary
 
-	def loadEmbeddings(self, vectors_file, model_file, isTagged = False):
+	def loadEmbeddings(self, model_file, config, vectors_file = False):
 		
-		#print(vectors_file)
-		#print(embeddings_src)
-
 		my_dictionary = self.my_dictionary["word_index"]
 		embeddings_index = {}
 
 		if not vectors_file:
-			if isTagged:
-				vectors = create_tg_vectors(self.corpus_file, model_file + ".vec")
+			if config["TG"]:
+				vectors = create_tg_vectors(self.corpus_file, model_file + ".vec", config)
 			else:
-				vectors = create_vectors(self.corpus_file, model_file + ".vec")
+				vectors = create_vectors(self.corpus_file, model_file + ".vec", config)
 		else:
-			f = open(vectors_file, "r")
-			vectors = f.readlines()
-			f.close()
+			vectors = 
 			
 		i=0
 		for line in vectors:
@@ -102,13 +99,13 @@ class PreProcessing:
 			word = values[0]
 			coefs = np.asarray(values[1:], dtype='float32')
 			embeddings_index[word] = coefs
-			EMBEDDING_DIM = len(coefs)
+			#EMBEDDING_DIM = len(coefs)
 			i+=1
 			if i>10000:
 				break
 
 		print('Found %s word vectors.' % len(embeddings_index))
-		embedding_matrix = np.zeros((len(my_dictionary) + 1, EMBEDDING_DIM))
+		embedding_matrix = np.zeros((len(my_dictionary) + 1, config["EMBEDDING_DIM"]))
 		for word, i in my_dictionary.items():
 			embedding_vector = embeddings_index.get(word)
 			if embedding_vector is not None:
@@ -117,29 +114,33 @@ class PreProcessing:
 
 		self.embedding_matrix = embedding_matrix
 
-def train(corpus_file, model_file, vectors_file, isTagged):
+def train(corpus_file, model_file, config):
 
 	# preprocess data
 	preprocessing = PreProcessing()
-	preprocessing.loadData(corpus_file, model_file, create_dictionnary = True)
-	preprocessing.loadEmbeddings(vectors_file, model_file, isTagged)
+	preprocessing.loadData(corpus_file, model_file, config, create_dictionnary = True)
+	preprocessing.loadEmbeddings(model_file, config)
 	
 	# Establish params
+	"""
 	params_obj = Params()
 	params_obj.num_classes = preprocessing.num_classes
-	params_obj.vocab_size = len(preprocessing.my_dictionary["word_index"]) 
+	params_obj.vocab_size = 
 	params_obj.inp_length = MAX_SEQUENCE_LENGTH
 	params_obj.embeddings_dim = EMBEDDING_DIM
+	"""
+	config["num_classes"] = preprocessing.num_classes 
+	config["vocab_size"] = len(preprocessing.my_dictionary["word_index"]) 
 
 	# create and get model
 	cnn_model = models.CNNModel()
-	model, deconv_model, attention_model = cnn_model.getModel(params_obj=params_obj, weight=preprocessing.embedding_matrix)
+	model, deconv_model, attention_model = cnn_model.getModel(config=config, weight=preprocessing.embedding_matrix)
 
 	# train model
 	x_train, y_train, x_val, y_val = preprocessing.x_train, preprocessing.y_train, preprocessing.x_val, preprocessing.y_val
 	checkpoint = ModelCheckpoint(model_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 	callbacks_list = [checkpoint]
-	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=params_obj.num_epochs, batch_size=params_obj.batch_size, callbacks=callbacks_list)
+	model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=config["NUM_EPOCHS"], batch_size=config["BACH_SIZE"], callbacks=callbacks_list)
 
 	# save deconv model
 	try:

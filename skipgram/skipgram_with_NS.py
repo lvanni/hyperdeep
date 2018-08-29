@@ -8,21 +8,19 @@ from keras.layers import Embedding, Reshape, Activation, Input
 from keras.layers.merge import Dot
 from keras.models import Model
 from keras.preprocessing.sequence import skipgrams
-
-from config import EMBEDDING_DIM, NUM_EPOCHS, NEGATIVE_SAMPLES, WINDOW_SIZE
 from data_helpers import tokenize
 
-def create_vectors(corpus_file, vectors_file):
+def create_vectors(corpus_file, vectors_file, config):
 
     # GENSIM METHOD    				
     sentences = gensim.models.word2vec.LineSentence(corpus_file)
 
     # sg defines the training algorithm. By default (sg=0), CBOW is used. Otherwise (sg=1), skip-gram is employed.
-    model = gensim.models.Word2Vec(sentences, size=EMBEDDING_DIM, window=WINDOW_SIZE, min_count=0, workers=8, sg=1)
+    model = gensim.models.Word2Vec(sentences, size=config["EMBEDDING_DIM"], window=config["WINDOW_SIZE"], min_count=0, workers=8, sg=1)
 
     f = open(vectors_file ,'w')
     vectors = []
-    vector = '{} {}\n'.format(len(model.wv.index2word), EMBEDDING_DIM)
+    vector = '{} {}\n'.format(len(model.wv.index2word), config["EMBEDDING_DIM"])
     vectors.append(vector)
     f.write(vector)    
     for word in model.wv.index2word:
@@ -36,7 +34,7 @@ def create_vectors(corpus_file, vectors_file):
 
     return vectors
 
-def create_tg_vectors(corpus_file, vectors_file):
+def create_tg_vectors(corpus_file, vectors_file, config):
 
     print("CREATE TG vectors")
 
@@ -68,7 +66,7 @@ def create_tg_vectors(corpus_file, vectors_file):
     for ext in [".FORME", ".CODE", ".LEMME"]:
         v = {}
         sentences = gensim.models.word2vec.LineSentence(corpus_file + ext)
-        model = gensim.models.Word2Vec(sentences, size=int(EMBEDDING_DIM/3), window=WINDOW_SIZE, min_count=0, workers=8, sg=1)
+        model = gensim.models.Word2Vec(sentences, size=int(config["EMBEDDING_DIM"]/3), window=config["WINDOW_SIZE"], min_count=0, workers=8, sg=1)
         for word in model.wv.index2word:
             v[word] = " ".join(str(x) for x in model.wv[word])
         vectors_tg.append(v)
@@ -79,7 +77,7 @@ def create_tg_vectors(corpus_file, vectors_file):
         for word in line.split():
             if "__" in word or vectors.get(word, False): continue
             if word == "PAD":    
-                vectors[word] = "PAD " + "0 " * EMBEDDING_DIM + "\n"
+                vectors[word] = "PAD " + "0 " * config["EMBEDDING_DIM"] + "\n"
                 continue
             
             # make vectors representation
@@ -91,7 +89,7 @@ def create_tg_vectors(corpus_file, vectors_file):
                 try:
                     v += vectors_tg[i][arg] + " "
                 except:
-                    v += "0 " * int(EMBEDDING_DIM/3) + " "
+                    v += "0 " * int(config["EMBEDDING_DIM"]/3) + " "
                 i += 1
             v += "\n"
             vectors[word] = v
@@ -100,9 +98,9 @@ def create_tg_vectors(corpus_file, vectors_file):
             #      FROME**PAD**PAD
             #      PAD**CODE**PAD
             #      PAD**PAD**LEMME
-            #vectors[args[0]] = args[0] + " " + vectors_tg[0][args[0]] + " " + "0 " * int((EMBEDDING_DIM/3)*2) + "\n"            
-            #vectors[args[1]] = args[1] + " " + "0 " * int(EMBEDDING_DIM/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(EMBEDDING_DIM/3) + "\n"            
-            #vectors[args[2]] = args[2] + " " + "0 " * int((EMBEDDING_DIM/3)*2) + vectors_tg[2][args[2]] + " " + "\n"
+            #vectors[args[0]] = args[0] + " " + vectors_tg[0][args[0]] + " " + "0 " * int((config["EMBEDDING_DIM"]/3)*2) + "\n"            
+            #vectors[args[1]] = args[1] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + "\n"            
+            #vectors[args[2]] = args[2] + " " + "0 " * int((config["EMBEDDING_DIM"]/3)*2) + vectors_tg[2][args[2]] + " " + "\n"
             
             
 
@@ -110,7 +108,7 @@ def create_tg_vectors(corpus_file, vectors_file):
     vectors = list(vectors.values())
 
     # VECTOR HEADER
-    vector = ['{} {}\n'.format(voc_size, int(EMBEDDING_DIM/3)*3)]
+    vector = ['{} {}\n'.format(voc_size, int(config["EMBEDDING_DIM"]/3)*3)]
     vectors = vector + vectors
 
     f = open(vectors_file ,'w')

@@ -19,31 +19,31 @@ from keras.layers import Input, Embedding, LSTM, Dense, merge
 from keras.legacy.layers import Merge
 from keras.utils import np_utils
 
-from config import EMBEDDING_DIM, NB_FILTERS, FILTER_SIZES, DROPOUT_VAL
+#from config import EMBEDDING_DIM, config["NB_FILTERS"], config["FILTER_SIZES"], DROPOUT_VAL
 
 class CNNModel:
 	
-	def getModel(self, params_obj, weight=None):
+	def getModel(self, config, weight=None):
 
 		print("-"*20)
 		print("CREATE MODEL")
 		print("-"*20)
 		
-		inputs = Input(shape=(params_obj.inp_length,), dtype='int32')
+		inputs = Input(shape=(config["SEQUENCE_SIZE"],), dtype='int32')
 		
 		# ---------------
 		# EMBEDDING LAYER
 		# ---------------
 		embedding = Embedding(
-			params_obj.vocab_size+1, # due to mask_zero
-			params_obj.embeddings_dim,
-			input_length=params_obj.inp_length,
+			config["vocab_size"]+1, # due to mask_zero
+			config["EMBEDDING_DIM"],
+			input_length=config["SEQUENCE_SIZE"],
 			weights=[weight],
 			trainable=True
 		)(inputs)
 		print("embedding : ", embedding.shape)
 		
-		reshape = Reshape((params_obj.inp_length,params_obj.embeddings_dim,1))(embedding)
+		reshape = Reshape((config["SEQUENCE_SIZE"],config["EMBEDDING_DIM"],1))(embedding)
 		print("reshape : ", reshape.shape)
 
 		"""
@@ -52,16 +52,16 @@ class CNNModel:
 		# ------------------------------------------------------
 		conv_array = []
 		maxpool_array = []
-		for filter in FILTER_SIZES:
-			conv = Conv2D(NB_FILTERS, filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
+		for filter in config["FILTER_SIZES"]:
+			conv = Conv2D(config["NB_FILTERS"], filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
 			maxpool = MaxPooling2D(pool_size=(params_obj.inp_length - filter + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv)
 			conv_array.append(conv)
 			maxpool_array.append(maxpool)			
 						
-		deconv = Conv2DTranspose(1, FILTER_SIZES[0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
+		deconv = Conv2DTranspose(1, config["FILTER_SIZES"][0], EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv_array[0])
 		deconv_model = Model(input=inputs, output=deconv)
 
-		if len(FILTER_SIZES) >= 2:
+		if len(config["FILTER_SIZES"]) >= 2:
 			merged_tensor = merge(maxpool_array, mode='concat', concat_axis=1)
 			flatten = Flatten()(merged_tensor)
 		else:
@@ -71,21 +71,21 @@ class CNNModel:
 		# ---------------------------------------
 		# CONVOLUTION (FOR CNN+LSTM MODEL)
 		# ---------------------------------------
-		filter = FILTER_SIZES[0]
-		conv = Conv2D(NB_FILTERS, filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
+		filter = config["FILTER_SIZES"]
+		conv = Conv2D(config["NB_FILTERS"], filter, config["EMBEDDING_DIM"], border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(reshape)	
 		print("convolution :", conv.shape)
 		
 		# -----------------------------------------
 		# DECONVOLUTION (FOR CNN+LSTM MODEL)
 		# -----------------------------------------
-		deconv = Conv2DTranspose(1, filter, EMBEDDING_DIM, border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv)
+		deconv = Conv2DTranspose(1, filter, config["EMBEDDING_DIM"], border_mode='valid', init='normal', activation='relu', dim_ordering='tf')(conv)
 		print("deconvolution :", deconv.shape)
 		deconv_model = Model(input=inputs, output=deconv)
 
 		# --------------------
 		# ! ONLY FOR CNN MODEL
 		# --------------------	
-		maxpool = MaxPooling2D(pool_size=(params_obj.inp_length - filter + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv)
+		maxpool = MaxPooling2D(pool_size=(config["SEQUENCE_SIZE"] - filter + 1, 1), strides=(1,1), border_mode='valid', dim_ordering='tf')(conv)
 		print("MaxPooling2D :", maxpool.shape)
 		maxpool = Flatten()(maxpool)
 		print("flatten :", maxpool.shape)
@@ -140,20 +140,20 @@ class CNNModel:
 		# -------------
 		# Select input as "sent_representation" to use LSTM
 		# Select input as "maxpool" to drop LSTM
-		dropout = Dropout(DROPOUT_VAL)(sent_representation)
+		dropout = Dropout(config["DROPOUT_VAL"])(sent_representation)
 		print("Dropout :", dropout.shape)
 
 		# -----------------
 		# FINAL DENSE LAYER
 		# -----------------
-		hidden_dense = Dense(params_obj.dense_layer_size,kernel_initializer='uniform',activation='relu')(dropout)
-		output = Dense(params_obj.num_classes, activation='softmax')(hidden_dense)
+		hidden_dense = Dense(config["DENSE_LAYER_SIZE"],kernel_initializer='uniform',activation='relu')(dropout)
+		output = Dense(config["num_classes"], activation='softmax')(hidden_dense)
 		print("output :", output.shape)
 
 		# this creates a model that includes
 		model = Model(input=inputs, output=output)
 
-		op = optimizers.Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+		op = optimizers.Adam(lr=config["LEARNING_RATE"], beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 		#op = optimizers.Adam(lr=1e-3)
 		model.compile(optimizer=op, loss='categorical_crossentropy', metrics=['accuracy'])
 

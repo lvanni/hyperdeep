@@ -84,7 +84,20 @@ if __name__ == '__main__':
             args = get_args()
             corpus_file = args["-input"]
             model_file = args["-output"]
-            train(corpus_file, model_file, args.get("-w2vec", False), args.get("-tg", False))
+
+            # GET CONFIG FILE
+            try:
+                config = json.loads(open(corpus_file + ".config", "r").read())
+            except:
+                config = json.loads(open("config.json", "r").read())
+            # SAVE CONFIG FILE
+            config_json = open(model_file + ".config", "w")
+            config_json.write(json.dumps(config))
+            config_json.close()
+
+            # TRAIN
+            train(corpus_file, model_file, config)
+
         except:
             raise
             print_invalidArgs_mess()

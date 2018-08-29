@@ -13,7 +13,7 @@ MAX_NB_WORDS = None
 EMBEDDING_DIM = 120
 
 # float >= 0. 0 for no negative (=random) samples. 1 for same number as positive samples. etc.
-NEGATIVE_SAMPLES = 5.
+NEGATIVE_SAMPLES = 5.0
 
 # Window size for finding collocation (cooccurrence calcul)
 WINDOW_SIZE = 10
