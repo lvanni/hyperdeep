@@ -1,7 +1,8 @@
 {
 	"TG": 0,
 	"EMBEDDING_DIM": 120,
-	"MAX_NB_WORDS": 0,
+	"MIN_COUNT": 0,
+	"SG": 1,
 	"WINDOW_SIZE": 10,
 	"SEQUENCE_SIZE": 50,
 	"NB_FILTERS": 512,
