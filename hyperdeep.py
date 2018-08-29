@@ -116,7 +116,8 @@ if __name__ == '__main__':
             model_file = args[2]
             vectors_file = args[3]
             text_file = args[4]
-            predictions = predict(text_file, model_file, vectors_file)
+            config = json.loads(open(model_file + ".config", "r").read())
+            predictions = predict(text_file, model_file, config, vectors_file)
 
             # save predictions in a file
             result_path = "results/" + os.path.basename(text_file) + ".res"

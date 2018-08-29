@@ -8,22 +8,7 @@ from keras.layers import Conv2D
 
 from classifier.cnn import models
 from skipgram.skipgram_with_NS import create_vectors, create_tg_vectors
-
-#from config import DENSE_LAYER_SIZE, FILTER_SIZES, DROPOUT_VAL, NUM_EPOCHS, BACH_SIZE, MAX_SEQUENCE_LENGTH, EMBEDDING_DIM, VALIDATION_SPLIT
 from data_helpers import tokenize
-
-"""
-class Params:
-
-	# Initalize defaut parameters
-	dense_layer_size = DENSE_LAYER_SIZE
-	filter_sizes = FILTER_SIZES
-	dropout_val = DROPOUT_VAL
-	num_epochs = NUM_EPOCHS
-	batch_size = BACH_SIZE
-	inp_length = MAX_SEQUENCE_LENGTH
-	embeddings_dim = EMBEDDING_DIM
-"""
 
 class PreProcessing:
 
@@ -91,7 +76,9 @@ class PreProcessing:
 			else:
 				vectors = create_vectors(self.corpus_file, model_file + ".vec", config)
 		else:
-			vectors = 
+			f = open(vectors_file, "r")
+			vectors = f.readlines()
+			f.close()
 			
 		i=0
 		for line in vectors:
@@ -99,7 +86,6 @@ class PreProcessing:
 			word = values[0]
 			coefs = np.asarray(values[1:], dtype='float32')
 			embeddings_index[word] = coefs
-			#EMBEDDING_DIM = len(coefs)
 			i+=1
 			if i>10000:
 				break
@@ -122,13 +108,6 @@ def train(corpus_file, model_file, config):
 	preprocessing.loadEmbeddings(model_file, config)
 	
 	# Establish params
-	"""
-	params_obj = Params()
-	params_obj.num_classes = preprocessing.num_classes
-	params_obj.vocab_size = 
-	params_obj.inp_length = MAX_SEQUENCE_LENGTH
-	params_obj.embeddings_dim = EMBEDDING_DIM
-	"""
 	config["num_classes"] = preprocessing.num_classes 
 	config["vocab_size"] = len(preprocessing.my_dictionary["word_index"]) 
 
@@ -158,14 +137,14 @@ def train(corpus_file, model_file, config):
 	# save attention model
 	attention_model.save(model_file + ".attention")
 	
-def predict(text_file, model_file, vectors_file):
+def predict(text_file, model_file, config, vectors_file):
 
 	result = []
 
 	# preprocess data
 	preprocessing = PreProcessing()
-	preprocessing.loadData(text_file, model_file, create_dictionnary = False)
-	preprocessing.loadEmbeddings(vectors_file, model_file)
+	preprocessing.loadData(text_file, model_file, config, create_dictionnary = False)
+	preprocessing.loadEmbeddings(model_file, config, vectors_file)
 	
 	# load and predict
 	x_data = np.concatenate((preprocessing.x_train,preprocessing.x_val), axis=0)
