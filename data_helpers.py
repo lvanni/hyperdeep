@@ -1,9 +1,7 @@
 import pickle
 import numpy as np
 
-from config import MAX_SEQUENCE_LENGTH
-
-def tokenize(texts, model_file, create_dictionnary):
+def tokenize(texts, model_file, create_dictionnary, config):
 
 	if create_dictionnary:
 		my_dictionary = {}
@@ -16,11 +14,11 @@ def tokenize(texts, model_file, create_dictionnary):
 		with open(model_file + ".index", 'rb') as handle:
 			my_dictionary = pickle.load(handle)
 
-	data = (np.zeros((len(texts), MAX_SEQUENCE_LENGTH))).astype('int32')
+	data = (np.zeros((len(texts), config["SEQUENCE_SIZE"]))).astype('int32')
 	
 	i = 0
 	for line in texts:
-		words = line.split()[:MAX_SEQUENCE_LENGTH]
+		words = line.split()[:config["SEQUENCE_SIZE"]]
 		sentence_length = len(words)
 		sentence = []
 		for word in words:
@@ -53,8 +51,8 @@ def tokenize(texts, model_file, create_dictionnary):
 					"""
 					
 			sentence.append(my_dictionary["word_index"][word])
-		if sentence_length < MAX_SEQUENCE_LENGTH:
-			for j in range(MAX_SEQUENCE_LENGTH - sentence_length):
+		if sentence_length < config["SEQUENCE_SIZE"]:
+			for j in range(config["SEQUENCE_SIZE"] - sentence_length):
 				sentence.append(my_dictionary["word_index"]["PAD"])
 		
 		data[i] = sentence

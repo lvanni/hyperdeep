@@ -43,7 +43,7 @@ class PreProcessing:
 		#random.shuffle(data)
 		#labels, texts = zip(*data)
 
-		my_dictionary, data = tokenize(texts, model_file, create_dictionnary)
+		my_dictionary, data = tokenize(texts, model_file, create_dictionnary, config)
 
 		print('Found %s unique tokens.' % len(my_dictionary["word_index"]))
 
@@ -206,7 +206,7 @@ def predict(text_file, model_file, config, vectors_file):
 			else:
 				attention_value = attentions[sentence_nb][i-1]
 			if "**" in word:
-				j = int(EMBEDDING_DIM/3)
+				j = int(config["EMBEDDING_DIM"]/3)
 				word_args = word.split("**")
 				# deconvolution word
 				word = word_args[0] + "*" + str(float(np.sum(deconv_value[:j])))
