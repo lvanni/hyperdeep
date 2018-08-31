@@ -99,7 +99,7 @@ def create_tg_vectors(corpus_file, vectors_file, config):
             #      PAD**CODE**PAD
             #      PAD**PAD**LEMME
             #vectors[args[0]] = args[0] + " " + vectors_tg[0][args[0]] + " " + "0 " * int((config["EMBEDDING_DIM"]/3)*2) + "\n"            
-            #vectors[args[1]] = args[1] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + "\n"            
+            vectors[args[1] + "**" + args[1] + "**" + args[1]] = args[1] + "**" + args[1] + "**" + args[1] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + "\n"            
             #vectors[args[2]] = args[2] + " " + "0 " * int((config["EMBEDDING_DIM"]/3)*2) + vectors_tg[2][args[2]] + " " + "\n"
             
             
