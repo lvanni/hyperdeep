@@ -30,22 +30,22 @@ def tokenize(texts, model_file, create_dictionnary, config):
 					my_dictionary["index_word"][index] = word
 					
 					# FOR UNKNOWN WORDS     
-					if "**" in word:
-						args = word.split("**")
-						word = args[1] + "**" + args[1] + "**" + args[1]
-						if word not in my_dictionary["word_index"].keys():
-							index += 1
-							my_dictionary["word_index"][word] = index
-							my_dictionary["index_word"][index] = word
+					#if "**" in word:
+					#	args = word.split("**")
+					#	word = args[1] + "**" + args[1] + "**" + args[1]
+					#	if word not in my_dictionary["word_index"].keys():
+					#		index += 1
+					#		my_dictionary["word_index"][word] = index
+					#		my_dictionary["index_word"][index] = word
 
 				else:        
 					my_dictionary["word_index"][word] = my_dictionary["word_index"]["PAD"]
 					# FOR UNKNOWN WORDS   
-					if "**" in word:
-						args = word.split("**")    
-						word = args[1] + "**" + args[1] + "**" + args[1]
-						if word in my_dictionary["word_index"].keys():
-							my_dictionary["word_index"][word] = my_dictionary["word_index"][word]
+					#if "**" in word:
+					#	args = word.split("**")    
+					#	word = args[1] + "**" + args[1] + "**" + args[1]
+					#	if word in my_dictionary["word_index"].keys():
+					#		my_dictionary["word_index"][word] = my_dictionary["word_index"][word]
 					
 			sentence.append(my_dictionary["word_index"][word])
 		if sentence_length < config["SEQUENCE_SIZE"]:
