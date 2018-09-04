@@ -94,15 +94,8 @@ def create_tg_vectors(corpus_file, vectors_file, config):
             v += "\n"
             vectors[word] = v
             
-            # TODO ajouter les representaiton partielle : 
-            #      FROME**PAD**PAD
-            #      PAD**CODE**PAD
-            #      PAD**PAD**LEMME
-            #vectors[args[0]] = args[0] + " " + vectors_tg[0][args[0]] + " " + "0 " * int((config["EMBEDDING_DIM"]/3)*2) + "\n"            
-            #vectors[args[1] + "**" + args[1] + "**" + args[1]] = args[1] + "**" + args[1] + "**" + args[1] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + "\n"            
-            #vectors[args[2]] = args[2] + " " + "0 " * int((config["EMBEDDING_DIM"]/3)*2) + vectors_tg[2][args[2]] + " " + "\n"
-            
-            
+            # FOR UNKNOWN WORDS 
+            vectors[args[1] + "**" + args[1] + "**" + args[1]] = args[1] + "**" + args[1] + "**" + args[1] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + " " + vectors_tg[1][args[1]] + " " + "0 " * int(config["EMBEDDING_DIM"]/3) + "\n"
 
     voc_size = len(vectors.keys())
     vectors = list(vectors.values())

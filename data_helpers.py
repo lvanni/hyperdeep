@@ -15,7 +15,7 @@ def tokenize(texts, model_file, create_dictionnary, config):
 			my_dictionary = pickle.load(handle)
 
 	data = (np.zeros((len(texts), config["SEQUENCE_SIZE"]))).astype('int32')
-	
+
 	i = 0
 	for line in texts:
 		words = line.split()[:config["SEQUENCE_SIZE"]]
@@ -23,31 +23,42 @@ def tokenize(texts, model_file, create_dictionnary, config):
 		sentence = []
 		for word in words:
 			if word not in my_dictionary["word_index"].keys():
-				#print(word,  list(my_dictionary["word_index"].keys())[:20])
 				if create_dictionnary:
 					index += 1
 					my_dictionary["word_index"][word] = index
 					my_dictionary["index_word"][index] = word
+					star = False
+					if "Star" in word:
+						star = True
+						print("\t", word, my_dictionary["word_index"][word])
 					
 					# FOR UNKNOWN WORDS     
-					#if "**" in word:
-					#	args = word.split("**")
-					#	word = args[1] + "**" + args[1] + "**" + args[1]
-					#	if word not in my_dictionary["word_index"].keys():
-					#		index += 1
-					#		my_dictionary["word_index"][word] = index
-					#		my_dictionary["index_word"][index] = word
+					if "**" in word:
+						args = word.split("**")
+						word = args[1] + "**" + args[1] + "**" + args[1]
+						if word not in my_dictionary["word_index"].keys():
+							index += 1
+							my_dictionary["word_index"][word] = index
+							my_dictionary["index_word"][index] = word
+							if star:
+								print("\t\t", word, my_dictionary["word_index"][word])
 
 				else:        
-					my_dictionary["word_index"][word] = my_dictionary["word_index"]["PAD"]
-					# FOR UNKNOWN WORDS   
-					#if "**" in word:
-					#	args = word.split("**")    
-					#	word = args[1] + "**" + args[1] + "**" + args[1]
-					#	if word in my_dictionary["word_index"].keys():
-					#		my_dictionary["word_index"][word] = my_dictionary["word_index"][word]
-					
+					# FOR UNKNOWN WORDS
+					if "**" in word:
+						args = word.split("**")    
+						word = args[1] + "**" + args[1] + "**" + args[1]
+						if word in my_dictionary["word_index"].keys():
+							my_dictionary["word_index"][word] = my_dictionary["word_index"][word]
+						else:
+							my_dictionary["word_index"][word] = my_dictionary["word_index"]["PAD"]
+					else:
+						my_dictionary["word_index"][word] = my_dictionary["word_index"]["PAD"]
+
+
 			sentence.append(my_dictionary["word_index"][word])
+
+		# COMPLETE WITH PAD IF LENGTH IS < SEQUENCE_SIZE
 		if sentence_length < config["SEQUENCE_SIZE"]:
 			for j in range(config["SEQUENCE_SIZE"] - sentence_length):
 				sentence.append(my_dictionary["word_index"]["PAD"])
