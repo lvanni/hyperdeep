@@ -72,6 +72,7 @@ if __name__ == '__main__':
             results.close()
 
         except:
+            raise
             print_invalidArgs_mess()
             print("usage: python hyperdeep.py nn <model> <word>\n")
             print("\tmodel\ttmodel filename")

@@ -66,7 +66,7 @@ def create_tg_vectors(corpus_file, vectors_file, config):
     for ext in [".FORME", ".CODE", ".LEMME"]:
         v = {}
         sentences = gensim.models.word2vec.LineSentence(corpus_file + ext)
-        model = gensim.models.Word2Vec(sentences, size=int(config["EMBEDDING_DIM"]/3), window=config["WINDOW_SIZE"], min_count=0, workers=8, sg=1)
+        model = gensim.models.Word2Vec(sentences, size=int(config["EMBEDDING_DIM"]/3), window=config["WINDOW_SIZE"], min_count=config["MIN_COUNT"], workers=8, sg=config["SG"])
         for word in model.wv.index2word:
             v[word] = " ".join(str(x) for x in model.wv[word])
         vectors_tg.append(v)
@@ -138,6 +138,7 @@ FIND MOST SIMILAR WORD
 """
 def get_most_similar(word, vectors_file):
     w2v = get_w2v(vectors_file)
+    print(w2v.wv.vocab)
     most_similar = w2v.most_similar(positive=[word])
     print(most_similar)
     return most_similar
