@@ -1,6 +1,6 @@
 # HYPERDEEP
 Hyperdeep is a proof of concept of the deconvolution algorithm applied on text.
-It use a standard CNN for text classification, and include one layer of deconvolution for the automatic detection of linguistic marks. This software is integrated on the Hyperbase web platform (http://hyperbase.unice.fr) - a web toolbox for textual data analysis.
+It uses a standard CNN for text classification, and include one layer of deconvolution for the automatic detection of linguistic marks. This software is integrated on the Hyperbase web platform (http://hyperbase.unice.fr) - a web toolbox for textual data analysis.
 
 # requirements:
 - python3
